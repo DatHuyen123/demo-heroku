@@ -1,1 +1,0 @@
-web: java -jar target/vnpt-1.0.jar
