@@ -24,4 +24,14 @@ public class DateTimeUtils {
         return formatter.format(dateNow);
     }
 
+    public static String formatDateTimeQuery(String date) throws ParseException {
+        String dateNew = date;
+        if (date.trim().contains("-")){
+            dateNew = date.trim().replace("-" , "/");
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateNew);
+        return formatter.format(date1);
+    }
+
 }

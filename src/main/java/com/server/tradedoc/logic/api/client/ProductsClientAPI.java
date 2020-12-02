@@ -22,9 +22,6 @@ public class ProductsClientAPI {
     @Autowired
     private ProductsService productsService;
 
-    @Autowired
-    private Gson gson;
-
     @RequestMapping(value = "/get-all-products" , method = RequestMethod.GET)
     public ResponseEntity<?> getAllProducts() throws URISyntaxException {
         return ResponseEntity.ok(productsService.getAllProducts());

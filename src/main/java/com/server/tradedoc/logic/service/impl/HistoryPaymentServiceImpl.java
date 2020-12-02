@@ -4,17 +4,20 @@ import com.server.tradedoc.constants.AppConstant;
 import com.server.tradedoc.logic.builder.SearchHistoryPaymentBuilder;
 import com.server.tradedoc.logic.converter.HistoryPaymentConverter;
 import com.server.tradedoc.logic.dto.HistoryPaymentDTO;
+import com.server.tradedoc.logic.dto.reponse.HistoryPaymentSearchDTO;
 import com.server.tradedoc.logic.entity.CustomersEntity;
 import com.server.tradedoc.logic.entity.HistoryPaymentEntity;
 import com.server.tradedoc.logic.entity.ProductsEntity;
 import com.server.tradedoc.logic.enums.PaymentType;
 import com.server.tradedoc.logic.repository.HistoryPaymentRepository;
 import com.server.tradedoc.logic.service.HistoryPaymentService;
-import com.server.tradedoc.utils.BuildMapUtils;
+import com.server.tradedoc.utils.FilesUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -31,19 +34,20 @@ public class HistoryPaymentServiceImpl implements HistoryPaymentService {
     private HistoryPaymentConverter historyPaymentConverter;
 
     @Autowired
-    private BuildMapUtils buildMapUtils;
+    private FilesUtils filesUtils;
 
     @Override
     public Map<String, String> getAllPaymentType() {
-        Map<String , String> result = new HashMap<>();
+        Map<String, String> result = new HashMap<>();
         Stream.of(PaymentType.values()).forEach(item -> {
-            result.put(item.name() , item.getValue());
+            result.put(item.name(), item.getValue());
         });
         return result;
     }
 
     @Override
-    public HistoryPaymentDTO save(ProductsEntity productsEntity, CustomersEntity customersEntity , PaymentType paymentType , String total) {
+    @Transactional
+    public HistoryPaymentDTO save(ProductsEntity productsEntity, CustomersEntity customersEntity, PaymentType paymentType, String total) {
         HistoryPaymentEntity historyPaymentEntity = new HistoryPaymentEntity();
         historyPaymentEntity.setPaymentType(paymentType.toString());
         historyPaymentEntity.setProduct(productsEntity);
@@ -57,10 +61,16 @@ public class HistoryPaymentServiceImpl implements HistoryPaymentService {
     }
 
     @Override
-    public List<HistoryPaymentDTO> getAllHistoryPayment(SearchHistoryPaymentBuilder builder, Pageable pageable) {
-        Map<String , Object> parameter = buildMapUtils.buildMapSearch(builder);
-
-        return null;
+    public List<HistoryPaymentSearchDTO> getAllHistoryPayment(SearchHistoryPaymentBuilder builder, Pageable pageable) {
+        List<HistoryPaymentSearchDTO> result = historyPaymentRepository.findAllHistoryPayment(builder, pageable);
+        result.forEach(item -> {
+            try {
+                item.setProductAvatar(filesUtils.genFilePath(item.getProductAvatar()));
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        });
+        return result;
     }
 
 }

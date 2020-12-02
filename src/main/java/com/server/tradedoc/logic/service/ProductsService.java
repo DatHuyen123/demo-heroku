@@ -22,8 +22,8 @@ import java.util.Map;
  */
 public interface ProductsService {
     List<ProductsDTO> getAllProducts() throws URISyntaxException;
-    Long createProduct(List<MultipartFile> imageFiles , MultipartFile file , String data);
-    Long updateProduct(List<MultipartFile> imageFiles , MultipartFile file , String data);
+    Long createProduct(List<MultipartFile> imageFiles , MultipartFile file , String data , MultipartFile avatar);
+    Long updateProduct(List<MultipartFile> imageFiles , MultipartFile file , String data , MultipartFile avatar);
     List<Long> deleteProduct(List<Long> ids);
     Map<String , Object> createPayment(PayPalDTO payPalDTO);
     Map<String, Object> completePayment(String payerId , String paymentId , Long productId , Long customerId);
@@ -31,4 +31,5 @@ public interface ProductsService {
     PaymentIntent paymentIntent(PaymentIntentDTO paymentIntentDto) throws StripeException;
     Map<String , Object> confirm(String id, Long productId , Long customerId) ;
     Map<String , Object> cancel(String id) ;
+    Map<String , String> getProductTypes();
 }

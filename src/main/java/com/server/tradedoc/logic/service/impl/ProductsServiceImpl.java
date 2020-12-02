@@ -20,6 +20,7 @@ import com.server.tradedoc.logic.entity.ProductsEntity;
 import com.server.tradedoc.logic.enums.PayPalPaymentIntent;
 import com.server.tradedoc.logic.enums.PayPalPaymentMethod;
 import com.server.tradedoc.logic.enums.PaymentType;
+import com.server.tradedoc.logic.enums.ProductTypes;
 import com.server.tradedoc.logic.repository.*;
 import com.server.tradedoc.logic.service.HistoryPaymentService;
 import com.server.tradedoc.logic.service.ProductsService;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * ProductsServiceImpl
@@ -98,6 +100,7 @@ public class ProductsServiceImpl implements ProductsService {
                     imageEntity.setPathFile(filesUtils.genFilePath(imageEntity.getPathFile()));
                     imageEntities.add(imageEntity);
                 }
+                productsEntity.setAvatar(filesUtils.genFilePath(productsEntity.getAvatar()));
                 productsEntity.setImages(imageEntities);
                 ProductsDTO productsDTO = productsConverter.toDto(productsEntity);
                 result.add(productsDTO);
@@ -108,9 +111,12 @@ public class ProductsServiceImpl implements ProductsService {
 
     @Override
     @Transactional
-    public Long createProduct(List<MultipartFile> imageFiles, MultipartFile file, String data) {
+    public Long createProduct(List<MultipartFile> imageFiles, MultipartFile file, String data , MultipartFile avatar) {
         if (file == null) {
             throw new CustomException("file undefined", CommonUtils.putError("file", "ERR_0034"));
+        }
+        if (avatar == null){
+            throw new CustomException("avatar undefined", CommonUtils.putError("avatar", "ERR_0034"));
         }
         if (imageFiles.isEmpty()) {
             throw new CustomException("image undefined", CommonUtils.putError("imageFiles", "ERR_0034"));
@@ -121,6 +127,7 @@ public class ProductsServiceImpl implements ProductsService {
         }
         ProductsEntity productsEntity = productsConverter.toEntity(productsDTO);
         productsEntity.setPathFile(filesUtils.save(file, "/fileproducts/", filesUtils.generateFileName(file.getOriginalFilename())));
+        productsEntity.setAvatar(filesUtils.save(avatar , "/avatar_product/" , filesUtils.generateFileName(avatar.getOriginalFilename())));
         List<CategoryEntity> categoryEntities = categoryRepository.findCategoryEntitiesByIdIn(productsDTO.getCategoryIds());
         productsEntity.setCategorys(categoryEntities);
         ProductsEntity productsEntityAfterInsert = productsRepository.save(productsEntity);
@@ -138,9 +145,12 @@ public class ProductsServiceImpl implements ProductsService {
 
     @Override
     @Transactional
-    public Long updateProduct(List<MultipartFile> imageFiles, MultipartFile file, String data) {
+    public Long updateProduct(List<MultipartFile> imageFiles, MultipartFile file, String data , MultipartFile avatar) {
         if (file == null) {
             throw new CustomException("file undefined", CommonUtils.putError("file", "ERR_0034"));
+        }
+        if (avatar == null){
+            throw new CustomException("avatar undefined", CommonUtils.putError("avatar", "ERR_0034"));
         }
         if (imageFiles.isEmpty()) {
             throw new CustomException("image undefined", CommonUtils.putError("imageFiles", "ERR_0034"));
@@ -151,6 +161,7 @@ public class ProductsServiceImpl implements ProductsService {
         }
         ProductsEntity productsEntity = productsConverter.toEntity(productsDTO);
         productsEntity.setPathFile(filesUtils.save(file, "/fileproducts/", filesUtils.generateFileName(file.getOriginalFilename())));
+        productsEntity.setAvatar(filesUtils.save(avatar , "/avatar_product/" , filesUtils.generateFileName(avatar.getOriginalFilename())));
         List<CategoryEntity> categoryEntities = categoryRepository.findCategoryEntitiesByIdIn(productsDTO.getCategoryIds());
         productsEntity.setCategorys(categoryEntities);
         ProductsEntity productsEntityAfterUpdate = productsRepository.save(productsEntity);
@@ -184,7 +195,7 @@ public class ProductsServiceImpl implements ProductsService {
 
         Amount amount = new Amount();
         amount.setCurrency(payPalDTO.getCurrent());
-        amount.setTotal(payPalDTO.getSum());
+        amount.setTotal(productsRepository.findById(payPalDTO.getProductId()).get().getPrice().toString());
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
         List<Transaction> transactions = new ArrayList<>();
@@ -277,7 +288,7 @@ public class ProductsServiceImpl implements ProductsService {
         List<String> paymentMethodTypes = new ArrayList<>();
         paymentMethodTypes.add("card");
         Map<String, Object> params = new HashMap<>();
-        params.put("amount", paymentIntentDto.getAmount());
+        params.put("amount", productsRepository.findById(paymentIntentDto.getProductId()).get().getPrice());
         params.put("currency", paymentIntentDto.getCurrency());
         params.put("description", paymentIntentDto.getDescription());
         params.put("payment_method_types", paymentMethodTypes);
@@ -332,4 +343,15 @@ public class ProductsServiceImpl implements ProductsService {
         }
         return result;
     }
+
+    @Override
+    public Map<String, String> getProductTypes() {
+        Map<String , String> result = new HashMap<>();
+        Stream.of(ProductTypes.values()).forEach(item -> {
+            result.put(item.name() , item.getValue());
+        });
+        return result;
+    }
+
+
 }

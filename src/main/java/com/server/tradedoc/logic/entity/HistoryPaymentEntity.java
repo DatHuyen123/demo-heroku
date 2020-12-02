@@ -1,9 +1,37 @@
 package com.server.tradedoc.logic.entity;
 
-import javax.persistence.*;
+import com.server.tradedoc.logic.dto.reponse.CategoryResponse;
+import com.server.tradedoc.logic.dto.reponse.HistoryPaymentSearchDTO;
 
+import javax.persistence.*;
+import java.time.Instant;
+
+/**
+ * HistoryPaymentEntity
+ *
+ * @author DatDV
+ */
 @Entity
 @Table(name = "history_payment")
+@SqlResultSetMapping(name = "findAllHistoryPayment" , classes = {
+        @ConstructorResult(targetClass = HistoryPaymentSearchDTO.class ,
+                columns = {
+                        /*@ColumnResult(name = "created_by", type = String.class),
+                        @ColumnResult(name = "modified_by", type = String.class),*/
+                        @ColumnResult(name = "payment_type", type = String.class),
+                        @ColumnResult(name = "payment_total", type = Long.class),
+                        @ColumnResult(name = "customer_id", type = Long.class),
+                        @ColumnResult(name = "history_status", type = String.class),
+                        @ColumnResult(name = "customer_name", type = String.class),
+                        @ColumnResult(name = "customer_email", type = String.class),
+                        @ColumnResult(name = "customer_phone", type = String.class),
+                        @ColumnResult(name = "product_price", type = Integer.class),
+                        @ColumnResult(name = "product_name", type = String.class),
+                        @ColumnResult(name = "product_avatar", type = String.class),
+                        @ColumnResult(name = "created_date", type = Instant.class),
+                        @ColumnResult(name = "modified_date", type = Instant.class),
+                })
+})
 public class HistoryPaymentEntity extends BaseEntity {
 
     @Column(name = "paymenttype")

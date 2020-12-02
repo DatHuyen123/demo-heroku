@@ -13,8 +13,8 @@ public class SearchHistoryPaymentBuilder {
     private String paymentDateTo;
     private String customerName;
     private String phoneNumber;
-    private String priceTo;
-    private String priceForm;
+    private Integer priceTo;
+    private Integer priceForm;
 
     public String getEmailCustomer() {
         return emailCustomer;
@@ -34,10 +34,10 @@ public class SearchHistoryPaymentBuilder {
     public String getPhoneNumber() {
         return phoneNumber;
     }
-    public String getPriceTo() {
+    public Integer getPriceTo() {
         return priceTo;
     }
-    public String getPriceForm() {
+    public Integer getPriceForm() {
         return priceForm;
     }
 
@@ -59,8 +59,8 @@ public class SearchHistoryPaymentBuilder {
         private String paymentDateTo;
         private String customerName;
         private String phoneNumber;
-        private String priceTo;
-        private String priceForm;
+        private Integer priceTo;
+        private Integer priceForm;
 
         public builder setEmailCustomer(String emailCustomer) {
             this.emailCustomer = emailCustomer;
@@ -86,11 +86,11 @@ public class SearchHistoryPaymentBuilder {
             this.phoneNumber = phoneNumber;
             return this;
         }
-        public builder setPriceTo(String priceTo) {
+        public builder setPriceTo(Integer priceTo) {
             this.priceTo = priceTo;
             return this;
         }
-        public builder setPriceForm(String priceForm) {
+        public builder setPriceForm(Integer priceForm) {
             this.priceForm = priceForm;
             return this;
         }

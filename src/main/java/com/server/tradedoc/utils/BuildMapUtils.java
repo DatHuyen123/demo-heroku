@@ -4,6 +4,7 @@ import com.server.tradedoc.utils.error.CustomException;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,17 +22,21 @@ public class BuildMapUtils {
             Field[] fields = object.getClass().getDeclaredFields();
             for (Field field : fields) {
                 field.setAccessible(true);
-                if (field.get(object) != null){
+                if (field.get(object) != null && !field.get(object).equals("")){
                     if (field.get(object) instanceof Integer) {
-                        result.put(field.getName().toLowerCase() , Integer.parseInt((String) field.get(object)));
+                        result.put(field.getName().toLowerCase() ,  field.get(object));
                     } else if (field.get(object) instanceof Long) {
-                        result.put(field.getName().toLowerCase() , Long.parseLong(field.get(object).toString()));
+                        result.put(field.getName().toLowerCase() , field.get(object));
                     } else {
-                        result.put(field.getName().toLowerCase() , BuildQueryUtils.formatLikeStringSql(field.get(object).toString()));
+                        if (!field.getName().contains("Date")) {
+                            result.put(field.getName().toLowerCase() , BuildQueryUtils.formatLikeStringSql(field.get(object).toString().trim()));
+                        } else {
+                            result.put(field.getName().toLowerCase() , DateTimeUtils.formatDateTimeQuery(field.get(object).toString().trim()));
+                        }
                     }
                 }
             }
-        } catch (IllegalArgumentException | IllegalAccessException e){
+        } catch (IllegalArgumentException | IllegalAccessException | ParseException e){
             throw new CustomException("build map fails" , CommonUtils.putError("class" , "ERR_002"));
         }
         return result;

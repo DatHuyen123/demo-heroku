@@ -5,7 +5,7 @@ import com.server.tradedoc.logic.enums.Currency;
 public class PaymentIntentDTO {
 
     private String description;
-    private int amount;
+    private Long productId;
     private Currency currency;
 
     public String getDescription() {
@@ -16,19 +16,19 @@ public class PaymentIntentDTO {
         this.description = description;
     }
 
-    public int getAmount() {
-        return amount;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
     public Currency getCurrency() {
         return currency;
     }
 
     public void setCurrency(Currency currency) {
         this.currency = currency;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 }

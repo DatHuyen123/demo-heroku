@@ -1,16 +1,8 @@
 package com.server.tradedoc.logic.dto.paymentrequest;
 
 public class PayPalDTO {
-    private String sum;
+    private Long productId;
     private String current;
-
-    public String getSum() {
-        return sum;
-    }
-
-    public void setSum(String sum) {
-        this.sum = sum;
-    }
 
     public String getCurrent() {
         return current;
@@ -18,5 +10,13 @@ public class PayPalDTO {
 
     public void setCurrent(String current) {
         this.current = current;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 }
