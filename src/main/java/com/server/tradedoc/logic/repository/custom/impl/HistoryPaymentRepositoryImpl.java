@@ -69,7 +69,7 @@ public class HistoryPaymentRepositoryImpl extends RepositoryCustomUtils<HistoryP
         if (!builder.getPaymentDateFrom().equals("")) {
             sql.append("AND CONCAT(DATE_FORMAT(his.createddate,\"%Y%m%d\") , \"0101\") >= DATE_FORMAT(STR_TO_DATE(:paymentdatefrom, '%d/%m/%Y') , '%Y%m%d') ");
         }
-        if (!builder.getPriceTo().equals("")) {
+        if (!builder.getPaymentDateTo().equals("")) {
             sql.append("AND CONCAT(DATE_FORMAT(his.createddate,\"%Y%m%d\") , \"0101\") <= DATE_FORMAT(STR_TO_DATE(:paymentdateto, '%d/%m/%Y') + 1, '%Y%m%d') ");
         }
         return this.getResultList(sql.toString(), parameter, "findAllHistoryPayment", pageable);
