@@ -11,6 +11,7 @@ com\server\tradedoc\utils\SecurityUtils.class
 com\server\tradedoc\logic\dto\CategoryDTO.class
 com\server\tradedoc\logic\enums\PaymentType.class
 com\server\tradedoc\logic\enums\Currency.class
+com\server\tradedoc\logic\enums\ProductTypes.class
 com\server\tradedoc\logic\dto\UserSignUpDTO.class
 com\server\tradedoc\logic\service\impl\CategoryServiceImpl.class
 com\server\tradedoc\logic\dto\paymentrequest\PayPalRequest.class
@@ -24,6 +25,7 @@ com\server\tradedoc\constants\Constants$PartNameSection.class
 com\server\tradedoc\logic\repository\CategoryRepository.class
 com\server\tradedoc\logic\dto\reponse\CategoryResponse.class
 com\server\tradedoc\logic\repository\custom\impl\CategoryRepositoryImpl.class
+com\server\tradedoc\logic\dto\HistoryPaymentDTO.class
 com\server\tradedoc\logic\entity\BaseEntity.class
 com\server\tradedoc\utils\error\ErrorConstants.class
 com\server\tradedoc\utils\PayPalUtils.class
@@ -43,6 +45,7 @@ com\server\tradedoc\logic\repository\ImageRepository.class
 com\server\tradedoc\logic\builder\SearchHistoryPaymentBuilder.class
 com\server\tradedoc\config\JpaTransactionManagerConfig.class
 com\server\tradedoc\constants\Constants$Query.class
+com\server\tradedoc\constants\AppConstant$deletedStatus.class
 com\server\tradedoc\logic\dto\CodeSignUpDTO.class
 com\server\tradedoc\config\JwtAuthenticationFilter.class
 com\server\tradedoc\config\TokenProvider.class
@@ -51,7 +54,9 @@ com\server\tradedoc\logic\converter\CodeSignUpConverter.class
 com\server\tradedoc\constants\Constants$ChangeAction.class
 com\server\tradedoc\logic\builder\SearchProductBuilder.class
 com\server\tradedoc\constants\Constants$Text.class
+com\server\tradedoc\constants\AppConstant$statusSendFile.class
 com\server\tradedoc\logic\repository\ProductsRepository.class
+com\server\tradedoc\logic\dto\reponse\HistoryPaymentSearchDTO.class
 com\server\tradedoc\constants\AppConstant.class
 com\server\tradedoc\logic\converter\CategoryConverter.class
 com\server\tradedoc\logic\converter\ImagesConverter.class
@@ -66,10 +71,12 @@ com\server\tradedoc\constants\AppConstant$O2Constants.class
 com\server\tradedoc\constants\AppConstant$sendMail.class
 com\server\tradedoc\logic\converter\ProductsConverter.class
 com\server\tradedoc\logic\repository\custom\CategoryRepositoryCustom.class
+com\server\tradedoc\logic\repository\custom\impl\HistoryPaymentRepositoryImpl.class
 com\server\tradedoc\utils\MailUtils.class
 com\server\tradedoc\logic\dto\reponse\MessageSuccess.class
 com\server\tradedoc\logic\entity\CommentsEntity.class
 com\server\tradedoc\logic\dto\CommentsDTO.class
+com\server\tradedoc\logic\converter\HistoryPaymentConverter.class
 com\server\tradedoc\logic\entity\CodeSignUpEntity.class
 com\server\tradedoc\logic\converter\MapperManager.class
 com\server\tradedoc\config\AuthorizationServerConfig.class
@@ -124,5 +131,6 @@ com\server\tradedoc\constants\AppConstant$MAIL.class
 com\server\tradedoc\constants\Constants$TMS.class
 com\server\tradedoc\logic\converter\CustomersConverter.class
 com\server\tradedoc\config\CORSFilter.class
+com\server\tradedoc\logic\repository\custom\HistoryPaymentRepositoryCustom.class
 com\server\tradedoc\constants\Constants$SearchTypeEnum.class
 com\server\tradedoc\constants\Constants$Authenticate.class
