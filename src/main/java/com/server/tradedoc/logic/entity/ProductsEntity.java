@@ -14,7 +14,7 @@ public class ProductsEntity extends BaseEntity {
     @Column(name = "price")
     private Integer price;
 
-    @Column(name = "description" , columnDefinition = "LONGTEXT")
+    @Column(name = "description" , columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "pathfile")
