@@ -44,6 +44,7 @@ public class FilesUtils {
     }
 
     public String save(MultipartFile file , String path , String fileName){
+        this.createFile();
         File fileMkdir = new File(System.getProperty("user.home") + root + path);
 
         if(!fileMkdir.exists()){
@@ -57,5 +58,16 @@ public class FilesUtils {
             throw new FileStorageException("Could not store file " + path + ". Please try again!", e);
         }
         return path + fileName;
+    }
+
+    private void createFile(){
+        File fileMkdirUsr = new File(System.getProperty("user.home") + "/usr");
+        if (!fileMkdirUsr.exists()){
+            fileMkdirUsr.mkdir();
+        }
+        File fileMkdirVar = new File(System.getProperty("user.home") + "/usr/var");
+        if (!fileMkdirVar.exists()){
+            fileMkdirVar.mkdir();
+        }
     }
 }
