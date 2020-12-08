@@ -5,9 +5,9 @@ import com.server.tradedoc.logic.builder.SearchHistoryPaymentBuilder;
 import com.server.tradedoc.logic.converter.HistoryPaymentConverter;
 import com.server.tradedoc.logic.dto.HistoryPaymentDTO;
 import com.server.tradedoc.logic.dto.reponse.HistoryPaymentSearchDTO;
-import com.server.tradedoc.logic.entity.CustomersEntity;
 import com.server.tradedoc.logic.entity.HistoryPaymentEntity;
 import com.server.tradedoc.logic.entity.ProductsEntity;
+import com.server.tradedoc.logic.entity.UserEntity;
 import com.server.tradedoc.logic.enums.PaymentType;
 import com.server.tradedoc.logic.repository.HistoryPaymentRepository;
 import com.server.tradedoc.logic.service.HistoryPaymentService;
@@ -47,11 +47,11 @@ public class HistoryPaymentServiceImpl implements HistoryPaymentService {
 
     @Override
     @Transactional
-    public HistoryPaymentDTO save(ProductsEntity productsEntity, CustomersEntity customersEntity, PaymentType paymentType, String total) {
+    public HistoryPaymentDTO save(ProductsEntity productsEntity, UserEntity userEntity, PaymentType paymentType, String total) {
         HistoryPaymentEntity historyPaymentEntity = new HistoryPaymentEntity();
         historyPaymentEntity.setPaymentType(paymentType.toString());
         historyPaymentEntity.setProduct(productsEntity);
-        historyPaymentEntity.setCustomer(customersEntity);
+        historyPaymentEntity.setCustomer(userEntity);
         historyPaymentEntity.setTotal(Long.parseLong(total.split("\\.")[0]));
         historyPaymentEntity.setStatus(AppConstant.statusSendFile.SUCCESS);
         historyPaymentEntity.setDeleted(AppConstant.deletedStatus.ACTIVE);

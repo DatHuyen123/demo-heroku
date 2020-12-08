@@ -32,9 +32,9 @@ public class HistoryPaymentRepositoryImpl extends RepositoryCustomUtils<HistoryP
                 "   his.total AS payment_total,                   " +
                 "   his.customerid AS customer_id,                " +
                 "   CASE                                            " +
-                "       WHEN his.status = 1 THEN \"Thành Công\"   " +
-                "       WHEN his.status = 0 THEN \"Thất Bại\"     " +
-                "   END history_status,                           " +
+                "       WHEN his.status = 1 THEN 'Thành Công'   " +
+                "       WHEN his.status = 0 THEN 'Thất Bại'     " +
+                "   END AS history_status,                           " +
                 "   cus.customername AS customer_name,              " +
                 "   cus.email AS customer_email,                  " +
                 "   cus.phonenumber AS customer_phone,            " +
@@ -44,12 +44,12 @@ public class HistoryPaymentRepositoryImpl extends RepositoryCustomUtils<HistoryP
                 "   his.createddate AS created_date,              " +
                 "   his.modifieddate AS modified_date            " +
                 "FROM                                             " +
-                "customers cus                                    " +
+                "users cus                                          " +
                 "INNER JOIN history_payment his ON cus.id = his.customerid " +
                 "INNER JOIN products pro ON pro.id = his.productid " +
                 "WHERE 1=1 ");
         if (!builder.getCustomerName().equals("")) {
-            sql.append("AND cus.customername LIKE :customername ");
+            sql.append("AND cus.fullname LIKE :customername ");
         }
         if (!builder.getEmailCustomer().equals("")) {
             sql.append("AND cus.email LIKE :emailcustomer ");
@@ -67,10 +67,10 @@ public class HistoryPaymentRepositoryImpl extends RepositoryCustomUtils<HistoryP
             sql.append("AND pro.productname LIKE :productname ");
         }
         if (!builder.getPaymentDateFrom().equals("")) {
-            sql.append("AND CONCAT(DATE_FORMAT(his.createddate,\"%Y%m%d\") , \"0101\") >= DATE_FORMAT(STR_TO_DATE(:paymentdatefrom, '%d/%m/%Y') , '%Y%m%d') ");
+            sql.append("AND his.createddate >= :paymentdatefrom ");
         }
         if (!builder.getPaymentDateTo().equals("")) {
-            sql.append("AND CONCAT(DATE_FORMAT(his.createddate,\"%Y%m%d\") , \"0101\") <= DATE_FORMAT(STR_TO_DATE(:paymentdateto, '%d/%m/%Y') + 1, '%Y%m%d') ");
+            sql.append("his.createddate <= :paymentdateto ");
         }
         return this.getResultList(sql.toString(), parameter, "findAllHistoryPayment", pageable);
     }

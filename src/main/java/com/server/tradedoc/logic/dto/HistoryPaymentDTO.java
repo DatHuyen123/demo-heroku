@@ -3,7 +3,7 @@ package com.server.tradedoc.logic.dto;
 public class HistoryPaymentDTO extends AbstractDTO {
 
     private String paymentType;
-    private CustomersDTO customer;
+    private UserDTO customer;
     private ProductsDTO product;
     private Long total;
     private Integer status;
@@ -17,11 +17,11 @@ public class HistoryPaymentDTO extends AbstractDTO {
         this.paymentType = paymentType;
     }
 
-    public CustomersDTO getCustomer() {
+    public UserDTO getCustomer() {
         return customer;
     }
 
-    public void setCustomer(CustomersDTO customer) {
+    public void setCustomer(UserDTO customer) {
         this.customer = customer;
     }
 

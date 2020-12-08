@@ -4,7 +4,6 @@
         <class>com.server.tradedoc.logic.entity.CategoryEntity</class>
         <class>com.server.tradedoc.logic.entity.ProductsEntity</class>
         <class>com.server.tradedoc.logic.entity.ImageEntity</class>
-        <class>com.server.tradedoc.logic.entity.CustomersEntity</class>
         <class>com.server.tradedoc.logic.entity.CodeSignUpEntity</class>
         <class>com.server.tradedoc.logic.entity.CommentsEntity</class>
         <class>com.server.tradedoc.logic.entity.UserEntity</class>

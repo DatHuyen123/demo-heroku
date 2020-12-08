@@ -3,9 +3,10 @@ package com.server.tradedoc.logic.dto;
 public class UserSignUpDTO {
 
     private String email;
-
     private String password;
-
+    private boolean isCustomer;
+    private String fullName;
+    private String phoneNumber;
     private String code;
 
     public String getEmail() {
@@ -30,5 +31,29 @@ public class UserSignUpDTO {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public boolean getIsCustomer() {
+        return isCustomer;
+    }
+
+    public void setIsCustomer(boolean isCustomer) {
+        this.isCustomer = isCustomer;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

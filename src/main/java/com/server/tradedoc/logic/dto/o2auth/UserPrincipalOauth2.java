@@ -18,16 +18,17 @@ public class UserPrincipalOauth2 implements UserDetails {
     private String password;
 
     private String fullName;
-
     private Long userId;
+    private String email;
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipalOauth2(String username, String password , String fullName , Long userId , Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipalOauth2(String username, String password , String fullName , String  email, Long userId , Collection<? extends GrantedAuthority> authorities) {
         this.username = username;
         this.password = password;
         this.fullName = fullName;
         this.userId = userId;
+        this.email = email;
         this.authorities = authorities;
     }
 
@@ -39,6 +40,7 @@ public class UserPrincipalOauth2 implements UserDetails {
                 userEntity.getUserName(),
                 userEntity.getPassWord(),
                 userEntity.getFullName(),
+                userEntity.getEmail(),
                 userEntity.getId(),
                 authorities
         );
@@ -61,6 +63,10 @@ public class UserPrincipalOauth2 implements UserDetails {
 
     public Long getUserId() {
         return userId;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     @Override

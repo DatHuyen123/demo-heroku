@@ -39,7 +39,7 @@ public class HistoryPaymentEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customerid")
-    private CustomersEntity customer;
+    private UserEntity customer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productid")
@@ -62,11 +62,11 @@ public class HistoryPaymentEntity extends BaseEntity {
         this.paymentType = paymentType;
     }
 
-    public CustomersEntity getCustomer() {
+    public UserEntity getCustomer() {
         return customer;
     }
 
-    public void setCustomer(CustomersEntity customer) {
+    public void setCustomer(UserEntity customer) {
         this.customer = customer;
     }
 

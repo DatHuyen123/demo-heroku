@@ -4,6 +4,7 @@ import com.server.tradedoc.utils.error.CustomException;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class BuildMapUtils {
                         if (!field.getName().contains("Date")) {
                             result.put(field.getName().toLowerCase() , BuildQueryUtils.formatLikeStringSql(field.get(object).toString().trim()));
                         } else {
-                            result.put(field.getName().toLowerCase() , DateTimeUtils.formatDateTimeQuery(field.get(object).toString().trim()));
+                            result.put(field.getName().toLowerCase() , DateTimeUtils.convertStringRequestToTimesTamp(DateTimeUtils.formatDateTimeQuery(field.get(object).toString().trim()) , "dd/MM/yyyy"));
                         }
                     }
                 }

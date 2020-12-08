@@ -13,10 +13,7 @@ import com.server.tradedoc.logic.dto.paymentrequest.PayPalDTO;
 import com.server.tradedoc.logic.dto.paymentrequest.PayPalRequest;
 import com.server.tradedoc.logic.dto.paymentrequest.PaymentIntentDTO;
 import com.server.tradedoc.logic.dto.reponse.MessageSuccess;
-import com.server.tradedoc.logic.entity.CategoryEntity;
-import com.server.tradedoc.logic.entity.CustomersEntity;
-import com.server.tradedoc.logic.entity.ImageEntity;
-import com.server.tradedoc.logic.entity.ProductsEntity;
+import com.server.tradedoc.logic.entity.*;
 import com.server.tradedoc.logic.enums.PayPalPaymentIntent;
 import com.server.tradedoc.logic.enums.PayPalPaymentMethod;
 import com.server.tradedoc.logic.enums.PaymentType;
@@ -26,6 +23,7 @@ import com.server.tradedoc.logic.service.HistoryPaymentService;
 import com.server.tradedoc.logic.service.ProductsService;
 import com.server.tradedoc.utils.CommonUtils;
 import com.server.tradedoc.utils.FilesUtils;
+import com.server.tradedoc.utils.JwtTokenUtils;
 import com.server.tradedoc.utils.MailUtils;
 import com.server.tradedoc.utils.error.CustomException;
 import com.stripe.Stripe;
@@ -63,7 +61,7 @@ public class ProductsServiceImpl implements ProductsService {
     private ProductsRepository productsRepository;
 
     @Autowired
-    private CustomersRepository customersRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private ProductsConverter productsConverter;
@@ -82,6 +80,9 @@ public class ProductsServiceImpl implements ProductsService {
 
     @Autowired
     private FilesUtils filesUtils;
+
+    @Autowired
+    private JwtTokenUtils jwtTokenUtils;
 
     @Autowired
     private APIContext apiContext;
@@ -236,7 +237,7 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     @Override
-    public Map<String, Object> completePayment(String payerId, String paymentId, Long productId, Long customerId) {
+    public Map<String, Object> completePayment(String payerId, String paymentId, Long productId) {
         Map<String, Object> response = new HashMap<>();
         Payment payment = new Payment();
         payment.setId(paymentId);
@@ -248,21 +249,21 @@ public class ProductsServiceImpl implements ProductsService {
             if (createdPayment != null) {
                 response.put("status", "success");
                 ProductsEntity productsEntity = productsRepository.findById(productId).get();
-                CustomersEntity customersEntity = customersRepository.findById(customerId).get();
-                if (productsEntity.getId() != null && customersEntity.getId() != null) {
+                UserEntity userEntity = userRepository.findById(jwtTokenUtils.getUserIdFromToken()).get();
+                if (productsEntity.getId() != null && userEntity.getId() != null) {
                     String template = "file for you: \n";
                     String subject = "WE SEND File To YOU";
-                    Boolean resultSendMail = mailUtils.sendFileToMail(template, customersEntity.getEmail(), subject, productsEntity.getPathFile());
+                    Boolean resultSendMail = mailUtils.sendFileToMail(template, jwtTokenUtils.getEmailFromToken(), subject, productsEntity.getPathFile());
                     if (!resultSendMail) {
                         throw new CustomException("cannot send email", CommonUtils.putError("email", "ERR_0013"));
                     }
-                    HistoryPaymentDTO historyPaymentDTO = historyPaymentService.save(productsEntity, customersEntity, PaymentType.PAY_PAL, createdPayment.getTransactions().get(0).getAmount().getTotal());
+                    HistoryPaymentDTO historyPaymentDTO = historyPaymentService.save(productsEntity, userEntity, PaymentType.PAY_PAL, createdPayment.getTransactions().get(0).getAmount().getTotal());
                     response.put("status_history", historyPaymentDTO.getStatus() == 1 ? "success_send" : "error_send");
                 } else {
                     if (productsEntity.getId() == null) {
                         throw new CustomException("cannot find product", CommonUtils.putError("productId", "ERR_0034"));
                     }
-                    if (customersEntity.getId() == null) {
+                    if (userEntity.getId() == null) {
                         throw new CustomException("cannot find customer", CommonUtils.putError("customerId", "ERR_0034"));
                     }
                 }
@@ -296,7 +297,7 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     @Override
-    public Map<String, Object> confirm(String id, Long productId, Long customerId) {
+    public Map<String, Object> confirm(String id, Long productId) {
         Map<String, Object> response = new HashMap<>();
         Stripe.apiKey = secretKeyStripe;
         try {
@@ -306,21 +307,21 @@ public class ProductsServiceImpl implements ProductsService {
             paymentIntent.confirm(params);
             response.put("status", "success");
             ProductsEntity productsEntity = productsRepository.findById(productId).get();
-            CustomersEntity customersEntity = customersRepository.findById(customerId).get();
-            if (productsEntity.getId() != null && customersEntity.getId() != null) {
+            UserEntity userEntity = userRepository.findById(jwtTokenUtils.getUserIdFromToken()).get();
+            if (productsEntity.getId() != null && userEntity.getId() != null) {
                 String template = "file for you: \n";
                 String subject = "WE SEND File To YOU";
-                Boolean resultSendMail = mailUtils.sendFileToMail(template, customersEntity.getEmail(), subject, productsEntity.getPathFile());
+                Boolean resultSendMail = mailUtils.sendFileToMail(template, jwtTokenUtils.getEmailFromToken() , subject, productsEntity.getPathFile());
                 if (!resultSendMail) {
                     throw new CustomException("cannot send email", CommonUtils.putError("email", "ERR_0013"));
                 }
-                HistoryPaymentDTO historyPaymentDTO = historyPaymentService.save(productsEntity, customersEntity, PaymentType.VISA, paymentIntent.getAmount().toString());
+                HistoryPaymentDTO historyPaymentDTO = historyPaymentService.save(productsEntity, userEntity, PaymentType.VISA, paymentIntent.getAmount().toString());
                 response.put("status_history", historyPaymentDTO.getStatus() == 1 ? "success_send" : "error_send");
             } else {
                 if (productsEntity.getId() == null) {
                     throw new CustomException("cannot find product", CommonUtils.putError("productId", "ERR_0034"));
                 }
-                if (customersEntity.getId() == null) {
+                if (userEntity.getId() == null) {
                     throw new CustomException("cannot find customer", CommonUtils.putError("customerId", "ERR_0034"));
                 }
             }

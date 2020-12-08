@@ -32,36 +32,4 @@ public class ProductsClientAPI {
         return ResponseEntity.ok(productsService.getById(id));
     }
 
-    @RequestMapping(value = "/paypal/make/payment" , method = RequestMethod.POST)
-    public Map<String , Object> makePayment(@RequestBody PayPalDTO payPalDTO){
-        return productsService.createPayment(payPalDTO);
-    }
-
-    @RequestMapping(value = "/paypal/complete/payment" , method = RequestMethod.POST)
-    public Map<String , Object> completePayment(HttpServletRequest request){
-        return productsService.completePayment(request.getParameter("PayerID") ,
-                                                request.getParameter("paymentId"),
-                                                Long.parseLong(request.getParameter("productId")),
-                                                Long.parseLong(request.getParameter("customerId")));
-    }
-
-    @RequestMapping(value = "/stripe/paymentintent" , method = RequestMethod.POST)
-    public ResponseEntity<?> paymentStripe(@RequestBody PaymentIntentDTO paymentIntentDTO) throws StripeException {
-        PaymentIntent paymentIntent = productsService.paymentIntent(paymentIntentDTO);
-        return ResponseEntity.ok(paymentIntent.toJson());
-    }
-
-    @RequestMapping(value = "/stripe/confirm" , method = RequestMethod.POST)
-    public ResponseEntity<?> confirm(HttpServletRequest request) {
-        Map<String , Object> response = productsService.confirm(request.getParameter("idStripe") ,
-                                                                Long.parseLong(request.getParameter("productId")) ,
-                                                                Long.parseLong(request.getParameter("customerId")));
-        return ResponseEntity.ok(response);
-    }
-
-    @RequestMapping(value = "/stripe/cancel" , method = RequestMethod.POST)
-    public ResponseEntity<?> cancel(HttpServletRequest request) {
-        Map<String , Object> response = productsService.cancel(request.getParameter("idStripe"));
-        return ResponseEntity.ok(response);
-    }
 }

@@ -23,6 +23,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/api/client/**").permitAll()
                 .antMatchers("/api/admin/**").access("hasRole('MANAGER')")
                 .antMatchers("/api/staff/**").access("hasRole('STAFF')")
+                .antMatchers("/api/customer/**").access("hasRole('CUSTOMER')")
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
     }
 }

@@ -18,6 +18,13 @@ public interface AppConstant {
         String USER_NAME = "user_name";
     }
 
+    interface TOKEN {
+        String USER_ID = "userId";
+        String FULL_NAME = "fullName";
+        String USER_NAME = "username";
+        String EMAIL = "email";
+    }
+
     interface ResourceServer {
         final String RESOURCE_ID = "resource_id";
     }
