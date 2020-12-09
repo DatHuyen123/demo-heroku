@@ -40,7 +40,6 @@ public class CategoryAdminAPI {
     private SearchCategoryBuilder initSearchCategoryBuilder (Map<String , String> model) {
         SearchCategoryBuilder builder = new SearchCategoryBuilder.builder()
                 .setName(model.get("categoryName"))
-                .setProductId(Long.parseLong(model.get("product")))
                 .builder();
         return builder;
     }
