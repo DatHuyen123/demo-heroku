@@ -47,8 +47,6 @@ public class CategoryRepositoryImpl extends RepositoryCustomUtils<CategoryEntity
                 "\tA.modifieddate AS modified_date,\n" +
                 "\tA.code AS category_code,\n" +
                 "\tA.name AS category_name FROM category A ");
-        sql.append("   INNER JOIN product_category B ON A.id = B.categoryid ");
-        sql.append("   INNER JOIN products C ON B.productid = C.id ");
         sql.append("WHERE 1=1 ");
         if (!builder.getName().equals("")) {
             sql.append("   AND LOWER(A.name) LIKE :name ");
