@@ -46,8 +46,8 @@ public class ProductsAdminAPI {
         return ResponseEntity.ok(productsService.deleteProduct(ids));
     }
 
-    @RequestMapping(value = "/find-one" , method = RequestMethod.GET)
-    public ResponseEntity<?> findOne(@RequestParam("id") Long id){
+    @RequestMapping(value = "/find-one-product" , method = RequestMethod.GET)
+    public ResponseEntity<?> findOneProduct(@RequestParam("id") Long id){
         return ResponseEntity.ok(productsService.getById(id));
     }
 

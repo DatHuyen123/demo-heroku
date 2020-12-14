@@ -16,4 +16,5 @@ public interface CategoryService {
     CategoryDTO createOrUpdateCategory(CategoryDTO categoryDTO);
     void deleteCategory(List<Long> ids);
     List<CategoryDTO> showAllCategory(SearchCategoryBuilder builder , Pageable pageable);
+    CategoryDTO findById(Long id);
 }

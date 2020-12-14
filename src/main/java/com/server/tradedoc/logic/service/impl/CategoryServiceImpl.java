@@ -61,4 +61,9 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryConverter.toListDto(categoryEntities);
     }
 
+    @Override
+    public CategoryDTO findById(Long id) {
+        return categoryConverter.toDto(categoryRepository.findById(id).get());
+    }
+
 }

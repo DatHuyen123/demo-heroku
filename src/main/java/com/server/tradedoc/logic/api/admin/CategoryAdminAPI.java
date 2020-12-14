@@ -37,6 +37,11 @@ public class CategoryAdminAPI {
         return ResponseEntity.ok(categoryService.showAllCategory(builder , pageable));
     }
 
+    @RequestMapping(value = "/find-one-category" , method = RequestMethod.GET)
+    public ResponseEntity<?> findOneCategory(@RequestParam("id") Long id){
+        return ResponseEntity.ok(categoryService.findById(id));
+    }
+
     private SearchCategoryBuilder initSearchCategoryBuilder (Map<String , String> model) {
         SearchCategoryBuilder builder = new SearchCategoryBuilder.builder()
                 .setName(model.get("categoryName"))
