@@ -1,6 +1,7 @@
 package com.server.tradedoc.logic.repository;
 
 import com.server.tradedoc.logic.entity.ProductsEntity;
+import com.server.tradedoc.logic.repository.custom.ProductsRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +10,5 @@ import org.springframework.stereotype.Repository;
  *
  * @author DatDV
  */
-@Repository
-public interface ProductsRepository extends JpaRepository<ProductsEntity , Long> {
+public interface ProductsRepository extends JpaRepository<ProductsEntity , Long>, ProductsRepositoryCustom {
 }

@@ -32,6 +32,12 @@ public class HistoryPaymentAPI {
         return ResponseEntity.ok(historyPaymentService.getAllHistoryPayment(builder , pageable));
     }
 
+    @RequestMapping(value = "/count" , method = RequestMethod.GET)
+    public ResponseEntity<?> count(@RequestParam Map<String , String> model){
+        SearchHistoryPaymentBuilder builder = initSearchBuilder(model);
+        return ResponseEntity.ok(historyPaymentService.countByCondition(builder));
+    }
+
     private SearchHistoryPaymentBuilder initSearchBuilder(Map<String , String> model) {
         SearchHistoryPaymentBuilder builder = new SearchHistoryPaymentBuilder.builder()
                 .setEmailCustomer(model.get("emailCustomer"))

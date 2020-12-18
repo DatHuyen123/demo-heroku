@@ -3,7 +3,9 @@ package com.server.tradedoc.logic.service.impl;
 import com.server.tradedoc.config.exception.CustomException;
 import com.server.tradedoc.constants.AppConstant;
 import com.server.tradedoc.logic.converter.CodeSignUpConverter;
+import com.server.tradedoc.logic.converter.UserConverter;
 import com.server.tradedoc.logic.dto.CodeSignUpDTO;
+import com.server.tradedoc.logic.dto.UserDTO;
 import com.server.tradedoc.logic.dto.UserSignUpDTO;
 import com.server.tradedoc.logic.dto.reponse.MessageSuccess;
 import com.server.tradedoc.logic.entity.CodeSignUpEntity;
@@ -12,6 +14,7 @@ import com.server.tradedoc.logic.repository.CodeSignUpRepository;
 import com.server.tradedoc.logic.repository.RoleRepository;
 import com.server.tradedoc.logic.repository.UserRepository;
 import com.server.tradedoc.logic.service.UserService;
+import com.server.tradedoc.utils.JwtTokenUtils;
 import com.server.tradedoc.utils.MailUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +54,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private MailUtils mailUtils;
+
+    @Autowired
+    private UserConverter userConverter;
+
+    @Autowired
+    private JwtTokenUtils jwtTokenUtils;
 
     @Override
     @Transactional
@@ -95,7 +104,7 @@ public class UserServiceImpl implements UserService {
             if (userSignUpDTO.getIsCustomer()) {
                 roleId = Arrays.asList(3L);
             } else {
-                roleId = Arrays.asList(1L, 2L);
+                roleId = Arrays.asList(1L);
             }
             userEntity.setRoles(roleRepository.findByIdIn(roleId));
             userEntity.setFullName(userSignUpDTO.getFullName());
@@ -108,5 +117,10 @@ public class UserServiceImpl implements UserService {
             result.setMessageSuccess("Sign Up Success");
         }
         return result;
+    }
+
+    @Override
+    public UserDTO findOne() {
+        return userConverter.toDto(userRepository.findById(jwtTokenUtils.getUserIdFromToken()).get());
     }
 }

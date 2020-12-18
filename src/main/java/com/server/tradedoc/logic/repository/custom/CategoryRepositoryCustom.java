@@ -13,6 +13,6 @@ import java.util.List;
  */
 public interface CategoryRepositoryCustom {
     List<CategoryEntity> findCategoryUseByIdIn(List<Long> ids);
-
     List<CategoryEntity> findAllCategory(SearchCategoryBuilder builder, Pageable pageable);
+    Long countCategory(SearchCategoryBuilder builder);
 }

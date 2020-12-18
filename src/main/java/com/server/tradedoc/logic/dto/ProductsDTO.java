@@ -13,7 +13,6 @@ public class ProductsDTO extends AbstractDTO {
     private String avatar;
     private String type;
     private List<ImageDTO> images;
-    private List<CommentsDTO> comments = new ArrayList<>();
     private List<Long> categoryIds;
 
     //method of DTO
@@ -55,14 +54,6 @@ public class ProductsDTO extends AbstractDTO {
 
     public void setImages(List<ImageDTO> images) {
         this.images = images;
-    }
-
-    public List<CommentsDTO> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<CommentsDTO> comments) {
-        this.comments = comments;
     }
 
     public List<Long> getCategoryIds() {

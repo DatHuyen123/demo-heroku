@@ -5,7 +5,6 @@
         <class>com.server.tradedoc.logic.entity.ProductsEntity</class>
         <class>com.server.tradedoc.logic.entity.ImageEntity</class>
         <class>com.server.tradedoc.logic.entity.CodeSignUpEntity</class>
-        <class>com.server.tradedoc.logic.entity.CommentsEntity</class>
         <class>com.server.tradedoc.logic.entity.UserEntity</class>
         <class>com.server.tradedoc.logic.entity.RoleEntity</class>
     </persistence-unit>

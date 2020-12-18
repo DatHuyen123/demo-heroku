@@ -53,4 +53,17 @@ public class CategoryRepositoryImpl extends RepositoryCustomUtils<CategoryEntity
         }
         return this.getResultList(sql.toString(), parameter, "findAllCategory", pageable);
     }
+
+    @Override
+    public Long countCategory(SearchCategoryBuilder builder) {
+        Map<String, Object> parameter = buildMapUtils.buildMapSearch(builder);
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT COUNT(*) FROM category A ");
+        sql.append("WHERE 1=1 ");
+        if (!builder.getName().equals("")) {
+            sql.append("   AND LOWER(A.name) LIKE LOWER(:name) ");
+        }
+        Long count = Long.parseLong(this.getSingleResult(sql.toString() , parameter).toString());
+        return count;
+    }
 }

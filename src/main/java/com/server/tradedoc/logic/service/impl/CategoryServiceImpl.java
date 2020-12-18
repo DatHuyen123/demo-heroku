@@ -3,6 +3,7 @@ package com.server.tradedoc.logic.service.impl;
 import com.server.tradedoc.logic.builder.SearchCategoryBuilder;
 import com.server.tradedoc.logic.converter.CategoryConverter;
 import com.server.tradedoc.logic.dto.CategoryDTO;
+import com.server.tradedoc.logic.dto.reponse.CountResponse;
 import com.server.tradedoc.logic.entity.CategoryEntity;
 import com.server.tradedoc.logic.repository.CategoryRepository;
 import com.server.tradedoc.logic.service.CategoryService;
@@ -64,6 +65,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO findById(Long id) {
         return categoryConverter.toDto(categoryRepository.findById(id).get());
+    }
+
+    @Override
+    public CountResponse count(SearchCategoryBuilder builder) {
+        CountResponse result = new CountResponse();
+        result.setCountItem(categoryRepository.countCategory(builder));
+        return result;
     }
 
 }

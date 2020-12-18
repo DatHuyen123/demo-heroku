@@ -4,6 +4,7 @@ import com.server.tradedoc.constants.AppConstant;
 import com.server.tradedoc.logic.builder.SearchHistoryPaymentBuilder;
 import com.server.tradedoc.logic.converter.HistoryPaymentConverter;
 import com.server.tradedoc.logic.dto.HistoryPaymentDTO;
+import com.server.tradedoc.logic.dto.reponse.CountResponse;
 import com.server.tradedoc.logic.dto.reponse.HistoryPaymentSearchDTO;
 import com.server.tradedoc.logic.entity.HistoryPaymentEntity;
 import com.server.tradedoc.logic.entity.ProductsEntity;
@@ -70,6 +71,13 @@ public class HistoryPaymentServiceImpl implements HistoryPaymentService {
                 e.printStackTrace();
             }
         });
+        return result;
+    }
+
+    @Override
+    public CountResponse countByCondition(SearchHistoryPaymentBuilder builder) {
+        CountResponse result = new CountResponse();
+        result.setCountItem(historyPaymentRepository.countByCondition(builder));
         return result;
     }
 

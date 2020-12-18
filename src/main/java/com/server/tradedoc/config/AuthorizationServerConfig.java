@@ -1,5 +1,6 @@
 package com.server.tradedoc.config;
 
+import com.server.tradedoc.config.o2.CustomTokenEnhancer;
 import com.server.tradedoc.constants.AppConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +27,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+        JwtAccessTokenConverter converter = new CustomTokenEnhancer();
         converter.setSigningKey("as466gf");
         return converter;
     }
@@ -49,6 +50,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints.tokenStore(tokenStore())
                 .authenticationManager(authenticationManager)
-                .accessTokenConverter(accessTokenConverter());
+                .tokenEnhancer(accessTokenConverter());
     }
 }

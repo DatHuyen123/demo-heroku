@@ -5,6 +5,7 @@ import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 import com.server.tradedoc.constants.AppConstant;
+import com.server.tradedoc.logic.builder.SearchProductBuilder;
 import com.server.tradedoc.logic.converter.ProductsConverter;
 import com.server.tradedoc.logic.dto.HistoryPaymentDTO;
 import com.server.tradedoc.logic.dto.ProductsDTO;
@@ -12,7 +13,9 @@ import com.server.tradedoc.logic.dto.paymentrequest.ChargeRequest;
 import com.server.tradedoc.logic.dto.paymentrequest.PayPalDTO;
 import com.server.tradedoc.logic.dto.paymentrequest.PayPalRequest;
 import com.server.tradedoc.logic.dto.paymentrequest.PaymentIntentDTO;
+import com.server.tradedoc.logic.dto.reponse.CountResponse;
 import com.server.tradedoc.logic.dto.reponse.MessageSuccess;
+import com.server.tradedoc.logic.dto.reponse.ProductsSearchDTO;
 import com.server.tradedoc.logic.entity.*;
 import com.server.tradedoc.logic.enums.PayPalPaymentIntent;
 import com.server.tradedoc.logic.enums.PayPalPaymentMethod;
@@ -32,6 +35,7 @@ import com.stripe.model.Charge;
 import com.stripe.model.PaymentIntent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,9 +74,6 @@ public class ProductsServiceImpl implements ProductsService {
     private ImageRepository imageRepository;
 
     @Autowired
-    private CommentRepository commentRepository;
-
-    @Autowired
     private CategoryRepository categoryRepository;
 
     @Autowired
@@ -107,6 +108,19 @@ public class ProductsServiceImpl implements ProductsService {
                 result.add(productsDTO);
             }
         }
+        return result;
+    }
+
+    @Override
+    public List<ProductsSearchDTO> getProductByCondition(SearchProductBuilder builder, Pageable pageable) {
+        List<ProductsSearchDTO> result = productsRepository.findAllProductByCondition(builder , pageable);
+        return result;
+    }
+
+    @Override
+    public CountResponse count(SearchProductBuilder builder) {
+        CountResponse result = new CountResponse();
+        result.setCountItem(productsRepository.countProductByCondition(builder));
         return result;
     }
 
@@ -183,7 +197,6 @@ public class ProductsServiceImpl implements ProductsService {
     public List<Long> deleteProduct(List<Long> ids) {
         for (Long id : ids) {
             ProductsEntity productsEntity = productsRepository.findById(id).get();
-            commentRepository.deleteCommentsEntityByProducts(productsEntity);
             imageRepository.deleteImageEntityByProducts(productsEntity);
             productsRepository.deleteById(id);
         }

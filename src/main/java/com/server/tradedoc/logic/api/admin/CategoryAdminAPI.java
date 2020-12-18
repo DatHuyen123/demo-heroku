@@ -3,6 +3,7 @@ package com.server.tradedoc.logic.api.admin;
 import com.server.tradedoc.logic.builder.SearchCategoryBuilder;
 import com.server.tradedoc.logic.builder.SearchHistoryPaymentBuilder;
 import com.server.tradedoc.logic.dto.CategoryDTO;
+import com.server.tradedoc.logic.dto.reponse.CountResponse;
 import com.server.tradedoc.logic.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,12 @@ public class CategoryAdminAPI {
     @RequestMapping(value = "/delete-category", method = RequestMethod.DELETE)
     public void deleteCategory(@RequestParam("ids") List<Long> ids){
         categoryService.deleteCategory(ids);
+    }
+
+    @RequestMapping(value = "/count" , method = RequestMethod.GET)
+    public ResponseEntity<CountResponse> countCategory(@RequestParam Map<String , String> model){
+        SearchCategoryBuilder searchCategoryBuilder = initSearchCategoryBuilder(model);
+        return ResponseEntity.ok(categoryService.count(searchCategoryBuilder));
     }
 
     @RequestMapping(value = "/show-all-category" , method = RequestMethod.GET)

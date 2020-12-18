@@ -9,4 +9,5 @@ import java.util.Map;
 
 public interface HistoryPaymentRepositoryCustom {
     List<HistoryPaymentSearchDTO> findAllHistoryPayment(SearchHistoryPaymentBuilder builder , Pageable pageable);
+    Long countByCondition(SearchHistoryPaymentBuilder builder);
 }

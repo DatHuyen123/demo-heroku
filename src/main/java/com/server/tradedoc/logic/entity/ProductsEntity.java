@@ -1,11 +1,32 @@
 package com.server.tradedoc.logic.entity;
 
+import com.server.tradedoc.logic.dto.reponse.ProductsSearchDTO;
+
 import javax.persistence.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "products")
+@SqlResultSetMapping(name = "findAllProductsByCondition" , classes = {
+        @ConstructorResult(targetClass = ProductsSearchDTO.class ,
+                columns = {
+                        @ColumnResult(name = "product_id", type = Long.class),
+                        @ColumnResult(name = "product_name", type = String.class),
+                        @ColumnResult(name = "category_name", type = String.class),
+                        @ColumnResult(name = "price", type = Integer.class),
+                        @ColumnResult(name = "path_file", type = String.class),
+                        @ColumnResult(name = "description", type = String.class),
+                        @ColumnResult(name = "type", type = String.class),
+                        @ColumnResult(name = "avatar", type = String.class),
+                        @ColumnResult(name = "title", type = String.class),
+                        @ColumnResult(name = "created_by", type = String.class),
+                        @ColumnResult(name = "modified_by", type = String.class),
+                        @ColumnResult(name = "created_date", type = Instant.class),
+                        @ColumnResult(name = "modified_date", type = Instant.class)
+                })
+})
 public class ProductsEntity extends BaseEntity {
 
     @Column(name = "productname")
@@ -28,9 +49,6 @@ public class ProductsEntity extends BaseEntity {
 
     @Column(name = "type")
     private String type;
-
-    @OneToMany(mappedBy = "products" , fetch = FetchType.LAZY)
-    private List<CommentsEntity> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "products" , fetch = FetchType.LAZY)
     private List<ImageEntity> images = new ArrayList<>();
@@ -78,14 +96,6 @@ public class ProductsEntity extends BaseEntity {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public List<CommentsEntity> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<CommentsEntity> comments) {
-        this.comments = comments;
     }
 
     public List<ImageEntity> getImages() {
