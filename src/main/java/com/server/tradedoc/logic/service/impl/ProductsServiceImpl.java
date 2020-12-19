@@ -4,18 +4,16 @@ import com.google.gson.Gson;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
-import com.server.tradedoc.constants.AppConstant;
 import com.server.tradedoc.logic.builder.SearchProductBuilder;
 import com.server.tradedoc.logic.converter.ProductsConverter;
 import com.server.tradedoc.logic.dto.HistoryPaymentDTO;
 import com.server.tradedoc.logic.dto.ProductsDTO;
-import com.server.tradedoc.logic.dto.paymentrequest.ChargeRequest;
 import com.server.tradedoc.logic.dto.paymentrequest.PayPalDTO;
-import com.server.tradedoc.logic.dto.paymentrequest.PayPalRequest;
 import com.server.tradedoc.logic.dto.paymentrequest.PaymentIntentDTO;
 import com.server.tradedoc.logic.dto.reponse.CountResponse;
-import com.server.tradedoc.logic.dto.reponse.MessageSuccess;
+import com.server.tradedoc.logic.dto.reponse.CreatedResponse;
 import com.server.tradedoc.logic.dto.reponse.ProductsSearchDTO;
+import com.server.tradedoc.logic.dto.reponse.UpdateResponse;
 import com.server.tradedoc.logic.entity.*;
 import com.server.tradedoc.logic.enums.PayPalPaymentIntent;
 import com.server.tradedoc.logic.enums.PayPalPaymentMethod;
@@ -31,7 +29,6 @@ import com.server.tradedoc.utils.MailUtils;
 import com.server.tradedoc.utils.error.CustomException;
 import com.stripe.Stripe;
 import com.stripe.exception.*;
-import com.stripe.model.Charge;
 import com.stripe.model.PaymentIntent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -126,15 +123,13 @@ public class ProductsServiceImpl implements ProductsService {
 
     @Override
     @Transactional
-    public Long createProduct(List<MultipartFile> imageFiles, MultipartFile file, String data , MultipartFile avatar) {
+    public CreatedResponse createProduct(MultipartFile file, String data , MultipartFile avatar) {
+        CreatedResponse response = new CreatedResponse();
         if (file == null) {
             throw new CustomException("file undefined", CommonUtils.putError("file", "ERR_0034"));
         }
         if (avatar == null){
             throw new CustomException("avatar undefined", CommonUtils.putError("avatar", "ERR_0034"));
-        }
-        if (imageFiles.isEmpty()) {
-            throw new CustomException("image undefined", CommonUtils.putError("imageFiles", "ERR_0034"));
         }
         ProductsDTO productsDTO = gson.fromJson(data, ProductsDTO.class);
         if (productsDTO.getCategoryIds() == null || productsDTO.getCategoryIds().isEmpty()) {
@@ -146,29 +141,24 @@ public class ProductsServiceImpl implements ProductsService {
         List<CategoryEntity> categoryEntities = categoryRepository.findCategoryEntitiesByIdIn(productsDTO.getCategoryIds());
         productsEntity.setCategorys(categoryEntities);
         ProductsEntity productsEntityAfterInsert = productsRepository.save(productsEntity);
-        for (MultipartFile image : imageFiles) {
-            String nameFileServer = filesUtils.generateFileName(image.getOriginalFilename());
-            String fileName = filesUtils.save(image, "/thumbnail/", nameFileServer);
-            ImageEntity imageEntity = new ImageEntity();
-            imageEntity.setName(nameFileServer);
-            imageEntity.setPathFile(fileName);
+        for (Long imageId : productsDTO.getImages()) {
+            ImageEntity imageEntity = imageRepository.findById(imageId).get();
             imageEntity.setProducts(productsEntityAfterInsert);
             imageRepository.save(imageEntity);
         }
-        return productsEntity.getId();
+        response.setIdInserted(productsEntity.getId());
+        return response;
     }
 
     @Override
     @Transactional
-    public Long updateProduct(List<MultipartFile> imageFiles, MultipartFile file, String data , MultipartFile avatar) {
+    public UpdateResponse updateProduct(MultipartFile file, String data , MultipartFile avatar) {
+        UpdateResponse response = new UpdateResponse();
         if (file == null) {
             throw new CustomException("file undefined", CommonUtils.putError("file", "ERR_0034"));
         }
         if (avatar == null){
             throw new CustomException("avatar undefined", CommonUtils.putError("avatar", "ERR_0034"));
-        }
-        if (imageFiles.isEmpty()) {
-            throw new CustomException("image undefined", CommonUtils.putError("imageFiles", "ERR_0034"));
         }
         ProductsDTO productsDTO = gson.fromJson(data, ProductsDTO.class);
         if (productsDTO.getCategoryIds() == null || productsDTO.getCategoryIds().isEmpty()) {
@@ -180,16 +170,13 @@ public class ProductsServiceImpl implements ProductsService {
         List<CategoryEntity> categoryEntities = categoryRepository.findCategoryEntitiesByIdIn(productsDTO.getCategoryIds());
         productsEntity.setCategorys(categoryEntities);
         ProductsEntity productsEntityAfterUpdate = productsRepository.save(productsEntity);
-        for (MultipartFile image : imageFiles) {
-            String nameFileServer = filesUtils.generateFileName(image.getOriginalFilename());
-            String fileName = filesUtils.save(image, "/thumbnail/", nameFileServer);
-            ImageEntity imageEntity = new ImageEntity();
-            imageEntity.setName(nameFileServer);
-            imageEntity.setPathFile(fileName);
+        for (Long imageId : productsDTO.getImages()) {
+            ImageEntity imageEntity = imageRepository.findById(imageId).get();
             imageEntity.setProducts(productsEntityAfterUpdate);
             imageRepository.save(imageEntity);
         }
-        return productsEntity.getId();
+        response.setIdUpdated(productsEntity.getId());
+        return response;
     }
 
     @Override

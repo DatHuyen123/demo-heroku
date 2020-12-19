@@ -29,19 +29,17 @@ public class ProductsAdminAPI {
     private ProductsService productsService;
 
     @RequestMapping(value = "/create-products" , method = RequestMethod.POST)
-    public ResponseEntity<?> createProducts(@RequestParam("images") List<MultipartFile> images ,
-                                            @RequestParam("fileProduct") MultipartFile file ,
+    public ResponseEntity<?> createProducts(@RequestParam("fileProduct") MultipartFile file ,
                                             @RequestParam("avatar") MultipartFile avatar ,
                                             @RequestParam String data){
-        return ResponseEntity.ok(productsService.createProduct(images , file , data , avatar));
+        return ResponseEntity.ok(productsService.createProduct(file , data , avatar));
     }
 
     @RequestMapping(value = "/update-products" , method = RequestMethod.PUT)
-    public ResponseEntity<?> updateProducts(@RequestParam("images") List<MultipartFile> images ,
-                                            @RequestParam("fileProduct") MultipartFile file ,
+    public ResponseEntity<?> updateProducts(@RequestParam("fileProduct") MultipartFile file ,
                                             @RequestParam("avatar") MultipartFile avatar,
                                             @RequestParam String data){
-        return ResponseEntity.ok(productsService.updateProduct(images , file , data , avatar));
+        return ResponseEntity.ok(productsService.updateProduct(file , data , avatar));
     }
 
     @RequestMapping(value = "/delete-products" , method = RequestMethod.DELETE)
