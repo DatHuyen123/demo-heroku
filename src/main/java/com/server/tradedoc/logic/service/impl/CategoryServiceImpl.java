@@ -4,6 +4,7 @@ import com.server.tradedoc.logic.builder.SearchCategoryBuilder;
 import com.server.tradedoc.logic.converter.CategoryConverter;
 import com.server.tradedoc.logic.dto.CategoryDTO;
 import com.server.tradedoc.logic.dto.reponse.CountResponse;
+import com.server.tradedoc.logic.dto.reponse.DeleteResponse;
 import com.server.tradedoc.logic.entity.CategoryEntity;
 import com.server.tradedoc.logic.repository.CategoryRepository;
 import com.server.tradedoc.logic.service.CategoryService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * CategoryServiceImpl
@@ -42,7 +44,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public void deleteCategory(List<Long> ids) {
+    public DeleteResponse deleteCategory(List<Long> ids) {
+        DeleteResponse response = new DeleteResponse();
         List<CategoryEntity> categoryEntities = categoryRepository.findCategoryUseByIdIn(ids);
         if (!categoryEntities.isEmpty()) {
             throw new CustomException("Catelogy is being used", CommonUtils.putError("ids", "ERR_0030"));
@@ -51,9 +54,12 @@ public class CategoryServiceImpl implements CategoryService {
         if (categoryEntityList.isEmpty()) {
             throw new CustomException("category not find", CommonUtils.putError("ids", "ERR_0030"));
         }
-        for (Long id : ids) {
+        List<Long> idByDelete = categoryEntityList.stream().map(CategoryEntity::getId).collect(Collectors.toList());
+        for (Long id : idByDelete) {
             categoryRepository.deleteById(id);
         }
+        response.setIdsDeleted(idByDelete);
+        return response;
     }
 
     @Override

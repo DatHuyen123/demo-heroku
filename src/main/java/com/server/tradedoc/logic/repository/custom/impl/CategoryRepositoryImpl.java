@@ -25,14 +25,10 @@ public class CategoryRepositoryImpl extends RepositoryCustomUtils<CategoryEntity
 
     @Override
     public List<CategoryEntity> findCategoryUseByIdIn(List<Long> ids) {
-        StringBuilder sql = new StringBuilder("SELECT c.* FROM category c INNER JOIN product_category pc ON c.id = pc.category_id ");
-        StringBuilder idCategoryUse = new StringBuilder();
-        for (Long id : ids) {
-            idCategoryUse.append(id + ",");
-        }
+        StringBuilder sql = new StringBuilder("SELECT c.* FROM category c INNER JOIN product_category pc ON c.id = pc.categoryid ");
         sql.append("WHERE 1=1 AND c.id IN (:idCategoryUse)");
         Map<String, Object> parameter = new HashMap<>();
-        parameter.put("idCategoryUse", idCategoryUse.toString().substring(0, idCategoryUse.toString().length() - 1));
+        parameter.put("idCategoryUse", ids);
         return this.getResultList(sql.toString(), parameter, CategoryEntity.class);
     }
 
