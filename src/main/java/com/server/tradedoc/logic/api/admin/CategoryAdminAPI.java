@@ -27,8 +27,8 @@ public class CategoryAdminAPI {
     }
 
     @RequestMapping(value = "/delete-category", method = RequestMethod.DELETE)
-    public void deleteCategory(@RequestParam("ids") List<Long> ids){
-        categoryService.deleteCategory(ids);
+    public ResponseEntity<?> deleteCategory(@RequestParam("ids") List<Long> ids){
+        return ResponseEntity.ok(categoryService.deleteCategory(ids));
     }
 
     @RequestMapping(value = "/count" , method = RequestMethod.GET)
