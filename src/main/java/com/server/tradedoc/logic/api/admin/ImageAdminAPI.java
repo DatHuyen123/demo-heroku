@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URISyntaxException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/public/api-client")
@@ -20,7 +21,8 @@ public class ImageAdminAPI {
 
     @RequestMapping(value = "/create-image", method = RequestMethod.POST)
     public ResponseEntity<?> createImage(@RequestParam("upload") MultipartFile image,
-                                         @RequestParam("role") String role) throws URISyntaxException {
-        return ResponseEntity.ok(imageService.createImage(image, role));
+                                         @RequestParam("ckCsrfToken") String role,
+                                         @RequestParam Map<String , String> model) throws URISyntaxException {
+        return ResponseEntity.ok(imageService.createImage(image, model.get("role")));
     }
 }

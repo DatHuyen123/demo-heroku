@@ -29,6 +29,8 @@ public class ImageServiceImpl implements ImageService {
         String nameFileServer = filesUtils.generateFileName(image.getOriginalFilename());
         String fileName = filesUtils.save(image, "/thumbnail/", nameFileServer);
         response.setUrl(filesUtils.genFilePath(fileName));
+        response.setFileName(nameFileServer);
+        response.setUploaded(1);
         return response;
     }
 }
