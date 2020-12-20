@@ -19,7 +19,7 @@ public class ImageAdminAPI {
     private ImageService imageService;
 
     @RequestMapping(value = "/create-image", method = RequestMethod.POST)
-    public ResponseEntity<?> createImage(@RequestParam("image") MultipartFile image,
+    public ResponseEntity<?> createImage(@RequestParam("upload") MultipartFile image,
                                          @RequestParam("role") String role) throws URISyntaxException {
         return ResponseEntity.ok(imageService.createImage(image, role));
     }
