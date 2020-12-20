@@ -24,7 +24,7 @@ import java.util.Map;
  * @author DatDV
  */
 public interface ProductsService {
-    List<ProductsDTO> getAllProducts() throws URISyntaxException;
+    List<ProductsDTO> getAllProducts(List<Long> categoryIds) throws URISyntaxException;
     List<ProductsSearchDTO> getProductByCondition(SearchProductBuilder builder , Pageable pageable);
     CountResponse count(SearchProductBuilder builder);
     CreatedResponse createProduct(MultipartFile file , String data , MultipartFile avatar);

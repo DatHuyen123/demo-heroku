@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -87,6 +88,22 @@ public class ProductsRepositoryImpl extends RepositoryCustomUtils<ProductsEntity
         }
         Long count = Long.parseLong(this.getSingleResult(sql.toString() , parameter).toString());
         return count;
+    }
+
+    @Override
+    public List<ProductsEntity> findAllProductByCategoryIds(List<Long> categoryIds) {
+        Map<String , Object> parameter = new HashMap<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT ");
+        sql.append("        * ");
+        sql.append("FROM products p ");
+        sql.append("    INNER JOIN product_category pc ON p.id = pc.productid ");
+        sql.append("WHERE 1=1 ");
+        if (!categoryIds.isEmpty()){
+            sql.append("AND pc.categoryid IN (:categoryIds) ");
+            parameter.put("categoryIds" , categoryIds);
+        }
+        return this.getResultList(sql.toString() , parameter , ProductsEntity.class);
     }
 
 }

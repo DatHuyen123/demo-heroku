@@ -12,7 +12,7 @@ public class ProductsDTO extends AbstractDTO {
     private String title;
     private String avatar;
     private String type;
-    private List<Long> images;
+    private List<Long> imagesId;
     private List<Long> categoryIds;
 
     //method of DTO
@@ -48,12 +48,12 @@ public class ProductsDTO extends AbstractDTO {
         this.title = title;
     }
 
-    public List<Long> getImages() {
-        return images;
+    public List<Long> getImagesId() {
+        return imagesId;
     }
 
-    public void setImages(List<Long> images) {
-        this.images = images;
+    public void setImagesId(List<Long> imagesId) {
+        this.imagesId = imagesId;
     }
 
     public List<Long> getCategoryIds() {

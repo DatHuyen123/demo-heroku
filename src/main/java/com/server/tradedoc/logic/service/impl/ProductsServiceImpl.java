@@ -89,8 +89,8 @@ public class ProductsServiceImpl implements ProductsService {
     private String secretKeyStripe;
 
     @Override
-    public List<ProductsDTO> getAllProducts() throws URISyntaxException {
-        List<ProductsEntity> entitys = productsRepository.findAll();
+    public List<ProductsDTO> getAllProducts(List<Long> categoryIds) throws URISyntaxException {
+        List<ProductsEntity> entitys = productsRepository.findAllProductByCategoryIds(categoryIds);
         List<ProductsDTO> result = new ArrayList<>();
         if (!entitys.isEmpty()) {
             for (ProductsEntity productsEntity : entitys) {
@@ -141,7 +141,7 @@ public class ProductsServiceImpl implements ProductsService {
         List<CategoryEntity> categoryEntities = categoryRepository.findCategoryEntitiesByIdIn(productsDTO.getCategoryIds());
         productsEntity.setCategorys(categoryEntities);
         ProductsEntity productsEntityAfterInsert = productsRepository.save(productsEntity);
-        for (Long imageId : productsDTO.getImages()) {
+        for (Long imageId : productsDTO.getImagesId()) {
             ImageEntity imageEntity = imageRepository.findById(imageId).get();
             imageEntity.setProducts(productsEntityAfterInsert);
             imageRepository.save(imageEntity);
@@ -170,7 +170,7 @@ public class ProductsServiceImpl implements ProductsService {
         List<CategoryEntity> categoryEntities = categoryRepository.findCategoryEntitiesByIdIn(productsDTO.getCategoryIds());
         productsEntity.setCategorys(categoryEntities);
         ProductsEntity productsEntityAfterUpdate = productsRepository.save(productsEntity);
-        for (Long imageId : productsDTO.getImages()) {
+        for (Long imageId : productsDTO.getImagesId()) {
             ImageEntity imageEntity = imageRepository.findById(imageId).get();
             imageEntity.setProducts(productsEntityAfterUpdate);
             imageRepository.save(imageEntity);

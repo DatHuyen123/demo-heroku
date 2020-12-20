@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,8 +24,8 @@ public class ProductsClientAPI {
     private ProductsService productsService;
 
     @RequestMapping(value = "/get-all-products" , method = RequestMethod.GET)
-    public ResponseEntity<?> getAllProducts() throws URISyntaxException {
-        return ResponseEntity.ok(productsService.getAllProducts());
+    public ResponseEntity<?> getAllProducts(@RequestParam("categoryIds") List<Long> categoryIds) throws URISyntaxException {
+        return ResponseEntity.ok(productsService.getAllProducts(categoryIds));
     }
 
     @RequestMapping(value = "/find-one" , method = RequestMethod.GET)

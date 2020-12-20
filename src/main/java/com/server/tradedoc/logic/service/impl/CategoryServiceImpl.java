@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,6 +67,17 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategoryDTO> showAllCategory(SearchCategoryBuilder builder, Pageable pageable) {
         List<CategoryEntity> categoryEntities = categoryRepository.findAllCategory(builder, pageable);
         return categoryConverter.toListDto(categoryEntities);
+    }
+
+    @Override
+    public List<CategoryDTO> showAll() {
+        List<CategoryDTO> resultDb = categoryConverter.toListDto(categoryRepository.findAll());
+        List<CategoryDTO> result = new ArrayList<>();
+        for (CategoryDTO categoryDTO : resultDb) {
+            categoryDTO.setProducts(new ArrayList<>());
+            result.add(categoryDTO);
+        }
+        return result;
     }
 
     @Override
