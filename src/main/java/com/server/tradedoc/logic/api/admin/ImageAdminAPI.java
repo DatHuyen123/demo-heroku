@@ -10,17 +10,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URISyntaxException;
-import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/public/api-client")
 public class ImageAdminAPI {
 
     @Autowired
     private ImageService imageService;
 
-    @RequestMapping(value = "/create-image" , method = RequestMethod.POST)
-    public ResponseEntity<?> createImage(@RequestParam("image") MultipartFile image) throws URISyntaxException {
-        return ResponseEntity.ok(imageService.createImage(image));
+    @RequestMapping(value = "/create-image", method = RequestMethod.POST)
+    public ResponseEntity<?> createImage(@RequestParam("image") MultipartFile image,
+                                         @RequestParam("role") String role) throws URISyntaxException {
+        return ResponseEntity.ok(imageService.createImage(image, role));
     }
 }

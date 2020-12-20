@@ -1,10 +1,6 @@
 package com.server.tradedoc.logic.service.impl;
 
-import com.server.tradedoc.logic.converter.ImagesConverter;
-import com.server.tradedoc.logic.dto.ImageDTO;
 import com.server.tradedoc.logic.dto.reponse.ImageResponse;
-import com.server.tradedoc.logic.entity.ImageEntity;
-import com.server.tradedoc.logic.repository.ImageRepository;
 import com.server.tradedoc.logic.service.ImageService;
 import com.server.tradedoc.utils.CommonUtils;
 import com.server.tradedoc.utils.FilesUtils;
@@ -22,9 +18,12 @@ public class ImageServiceImpl implements ImageService {
     private FilesUtils filesUtils;
 
     @Override
-    public ImageResponse createImage(MultipartFile image) throws URISyntaxException {
+    public ImageResponse createImage(MultipartFile image, String role) throws URISyntaxException {
         if (image.isEmpty()) {
             throw new CustomException("image undefined", CommonUtils.putError("image", "ERR_0034"));
+        }
+        if (!role.equals("ROLE_MANAGER")) {
+            throw new CustomException("access_denied", CommonUtils.putError("role", "ERR_0021"));
         }
         ImageResponse response = new ImageResponse();
         String nameFileServer = filesUtils.generateFileName(image.getOriginalFilename());
