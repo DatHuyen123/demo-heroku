@@ -12,7 +12,6 @@ public class ProductsDTO extends AbstractDTO {
     private String title;
     private String avatar;
     private String type;
-    private List<Long> imagesId;
     private List<Long> categoryIds;
 
     //method of DTO
@@ -46,14 +45,6 @@ public class ProductsDTO extends AbstractDTO {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public List<Long> getImagesId() {
-        return imagesId;
-    }
-
-    public void setImagesId(List<Long> imagesId) {
-        this.imagesId = imagesId;
     }
 
     public List<Long> getCategoryIds() {

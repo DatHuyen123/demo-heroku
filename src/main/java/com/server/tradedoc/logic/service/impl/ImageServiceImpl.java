@@ -2,6 +2,7 @@ package com.server.tradedoc.logic.service.impl;
 
 import com.server.tradedoc.logic.converter.ImagesConverter;
 import com.server.tradedoc.logic.dto.ImageDTO;
+import com.server.tradedoc.logic.dto.reponse.ImageResponse;
 import com.server.tradedoc.logic.entity.ImageEntity;
 import com.server.tradedoc.logic.repository.ImageRepository;
 import com.server.tradedoc.logic.service.ImageService;
@@ -20,24 +21,15 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     private FilesUtils filesUtils;
 
-    @Autowired
-    private ImageRepository imageRepository;
-
-    @Autowired
-    private ImagesConverter imagesConverter;
-
     @Override
-    public ImageDTO createImage(MultipartFile image) throws URISyntaxException {
+    public ImageResponse createImage(MultipartFile image) throws URISyntaxException {
         if (image.isEmpty()) {
-            throw new CustomException("image undefined", CommonUtils.putError("imageFiles", "ERR_0034"));
+            throw new CustomException("image undefined", CommonUtils.putError("image", "ERR_0034"));
         }
+        ImageResponse response = new ImageResponse();
         String nameFileServer = filesUtils.generateFileName(image.getOriginalFilename());
         String fileName = filesUtils.save(image, "/thumbnail/", nameFileServer);
-        ImageEntity imageEntity = new ImageEntity();
-        imageEntity.setName(nameFileServer);
-        imageEntity.setPathFile(fileName);
-        imageEntity = imageRepository.save(imageEntity);
-        imageEntity.setPathFile(filesUtils.genFilePath(imageEntity.getPathFile()));
-        return imagesConverter.toDto(imageEntity);
+        response.setUrl(filesUtils.genFilePath(fileName));
+        return response;
     }
 }

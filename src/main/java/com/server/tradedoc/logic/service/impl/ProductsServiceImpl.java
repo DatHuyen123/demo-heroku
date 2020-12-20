@@ -125,10 +125,10 @@ public class ProductsServiceImpl implements ProductsService {
     @Transactional
     public CreatedResponse createProduct(MultipartFile file, String data , MultipartFile avatar) {
         CreatedResponse response = new CreatedResponse();
-        if (file == null) {
+        if (file.isEmpty()) {
             throw new CustomException("file undefined", CommonUtils.putError("file", "ERR_0034"));
         }
-        if (avatar == null){
+        if (avatar.isEmpty()){
             throw new CustomException("avatar undefined", CommonUtils.putError("avatar", "ERR_0034"));
         }
         ProductsDTO productsDTO = gson.fromJson(data, ProductsDTO.class);
@@ -141,42 +141,14 @@ public class ProductsServiceImpl implements ProductsService {
         List<CategoryEntity> categoryEntities = categoryRepository.findCategoryEntitiesByIdIn(productsDTO.getCategoryIds());
         productsEntity.setCategorys(categoryEntities);
         ProductsEntity productsEntityAfterInsert = productsRepository.save(productsEntity);
-        for (Long imageId : productsDTO.getImagesId()) {
-            ImageEntity imageEntity = imageRepository.findById(imageId).get();
-            imageEntity.setProducts(productsEntityAfterInsert);
-            imageRepository.save(imageEntity);
-        }
-        response.setIdInserted(productsEntity.getId());
+        response.setIdInserted(productsEntityAfterInsert.getId());
         return response;
     }
 
     @Override
     @Transactional
     public UpdateResponse updateProduct(MultipartFile file, String data , MultipartFile avatar) {
-        UpdateResponse response = new UpdateResponse();
-        if (file == null) {
-            throw new CustomException("file undefined", CommonUtils.putError("file", "ERR_0034"));
-        }
-        if (avatar == null){
-            throw new CustomException("avatar undefined", CommonUtils.putError("avatar", "ERR_0034"));
-        }
-        ProductsDTO productsDTO = gson.fromJson(data, ProductsDTO.class);
-        if (productsDTO.getCategoryIds() == null || productsDTO.getCategoryIds().isEmpty()) {
-            throw new CustomException("category not null", CommonUtils.putError("data", "ERR_0034"));
-        }
-        ProductsEntity productsEntity = productsConverter.toEntity(productsDTO);
-        productsEntity.setPathFile(filesUtils.save(file, "/fileproducts/", filesUtils.generateFileName(file.getOriginalFilename())));
-        productsEntity.setAvatar(filesUtils.save(avatar , "/avatar_product/" , filesUtils.generateFileName(avatar.getOriginalFilename())));
-        List<CategoryEntity> categoryEntities = categoryRepository.findCategoryEntitiesByIdIn(productsDTO.getCategoryIds());
-        productsEntity.setCategorys(categoryEntities);
-        ProductsEntity productsEntityAfterUpdate = productsRepository.save(productsEntity);
-        for (Long imageId : productsDTO.getImagesId()) {
-            ImageEntity imageEntity = imageRepository.findById(imageId).get();
-            imageEntity.setProducts(productsEntityAfterUpdate);
-            imageRepository.save(imageEntity);
-        }
-        response.setIdUpdated(productsEntity.getId());
-        return response;
+        return null;
     }
 
     @Override
