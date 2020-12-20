@@ -40,7 +40,6 @@ public class ProductsRepositoryImpl extends RepositoryCustomUtils<ProductsEntity
         sql.append("FROM products pro ");
         sql.append("    INNER JOIN product_category pc  ON pro.id = pc.productid ");
         sql.append("    INNER JOIN category ca ON pc.categoryid = ca.id ");
-        sql.append("    INNER JOIN images img ON img.productid = pro.id ");
         sql.append("WHERE 1=1 ");
         if (!builder.getProductName().equals("")) {
             sql.append("AND pro.productname LIKE :productname ");
@@ -69,7 +68,6 @@ public class ProductsRepositoryImpl extends RepositoryCustomUtils<ProductsEntity
         sql.append("FROM products pro ");
         sql.append("    INNER JOIN product_category pc  ON pro.id = pc.productid ");
         sql.append("    INNER JOIN category ca ON pc.categoryid = ca.id ");
-        sql.append("    INNER JOIN images img ON img.productid = pro.id ");
         sql.append("WHERE 1=1 ");
         if (!builder.getProductName().equals("")) {
             sql.append("AND pro.productname LIKE :productname ");
