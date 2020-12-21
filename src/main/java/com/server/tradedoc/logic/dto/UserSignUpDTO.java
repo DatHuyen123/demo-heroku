@@ -4,7 +4,7 @@ public class UserSignUpDTO {
 
     private String email;
     private String password;
-    private boolean isCustomer;
+    private boolean isCustomer = true;
     private String fullName;
     private String phoneNumber;
     private String code;

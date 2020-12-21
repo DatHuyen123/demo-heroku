@@ -16,6 +16,7 @@ import com.server.tradedoc.logic.repository.UserRepository;
 import com.server.tradedoc.logic.service.UserService;
 import com.server.tradedoc.utils.JwtTokenUtils;
 import com.server.tradedoc.utils.MailUtils;
+import com.server.tradedoc.utils.RandomUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -77,13 +78,13 @@ public class UserServiceImpl implements UserService {
             throw new CustomException("ERROR_0034", "username or email already exist");
         }
         if (StringUtils.isBlank(userSignUpDTO.getCode())) {
-            String uuid = UUID.randomUUID().toString();
+            String uuid = RandomUtils.randomCode();
             CodeSignUpDTO codeSignUpDTO = new CodeSignUpDTO();
             codeSignUpDTO.setCode(uuid);
             codeSignUpDTO.setEmail(userSignUpDTO.getEmail());
             codeSignUpRepository.save(codeSignUpConverter.toEntity(codeSignUpDTO));
-            String template = "AE ANTSOFT CU Hello World!! \n Thank you for sign up! \n UUID FOR confirm: " + uuid + "";
-            String subject = "UUID confirm sign up";
+            String template = "support indicatormarkets!! \nthank you for sign up! \ncode for your using confirm signup account: " + uuid + "";
+            String subject = "code confirm sign up";
             if (mailUtils.sendMailUseTemplate(template, null, userSignUpDTO.getEmail(), subject)) {
                 result.setCodeSuccess("200");
                 result.setMessageSuccess("Check your mail");
@@ -101,10 +102,8 @@ public class UserServiceImpl implements UserService {
             userEntity.setEmail(userSignUpDTO.getEmail());
             userEntity.setPassWord(passwordEncoder.encode(userSignUpDTO.getPassword()));
             List<Long> roleId = new ArrayList<>();
-            if (userSignUpDTO.getIsCustomer()) {
+            if (true) {
                 roleId = Arrays.asList(3L);
-            } else {
-                roleId = Arrays.asList(1L);
             }
             userEntity.setRoles(roleRepository.findByIdIn(roleId));
             userEntity.setFullName(userSignUpDTO.getFullName());
