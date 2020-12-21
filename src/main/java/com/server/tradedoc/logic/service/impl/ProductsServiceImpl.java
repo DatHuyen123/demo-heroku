@@ -77,6 +77,9 @@ public class ProductsServiceImpl implements ProductsService {
     private HistoryPaymentService historyPaymentService;
 
     @Autowired
+    private HistoryPaymentRepository historyPaymentRepository;
+
+    @Autowired
     private FilesUtils filesUtils;
 
     @Autowired
@@ -157,6 +160,7 @@ public class ProductsServiceImpl implements ProductsService {
         for (Long id : ids) {
             ProductsEntity productsEntity = productsRepository.findById(id).get();
             imageRepository.deleteImageEntityByProducts(productsEntity);
+            historyPaymentRepository.deleteAllByProduct(productsEntity);
             productsRepository.deleteById(id);
         }
         return ids;
