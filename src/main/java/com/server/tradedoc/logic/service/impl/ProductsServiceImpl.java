@@ -14,7 +14,10 @@ import com.server.tradedoc.logic.dto.reponse.CountResponse;
 import com.server.tradedoc.logic.dto.reponse.CreatedResponse;
 import com.server.tradedoc.logic.dto.reponse.ProductsSearchDTO;
 import com.server.tradedoc.logic.dto.reponse.UpdateResponse;
-import com.server.tradedoc.logic.entity.*;
+import com.server.tradedoc.logic.entity.CategoryEntity;
+import com.server.tradedoc.logic.entity.ImageEntity;
+import com.server.tradedoc.logic.entity.ProductsEntity;
+import com.server.tradedoc.logic.entity.UserEntity;
 import com.server.tradedoc.logic.enums.PayPalPaymentIntent;
 import com.server.tradedoc.logic.enums.PayPalPaymentMethod;
 import com.server.tradedoc.logic.enums.PaymentType;
@@ -28,8 +31,10 @@ import com.server.tradedoc.utils.JwtTokenUtils;
 import com.server.tradedoc.utils.MailUtils;
 import com.server.tradedoc.utils.error.CustomException;
 import com.stripe.Stripe;
-import com.stripe.exception.*;
+import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
+import com.stripe.model.checkout.Session;
+import com.stripe.param.checkout.SessionCreateParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URISyntaxException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -113,7 +119,7 @@ public class ProductsServiceImpl implements ProductsService {
 
     @Override
     public List<ProductsSearchDTO> getProductByCondition(SearchProductBuilder builder, Pageable pageable) {
-        List<ProductsSearchDTO> result = productsRepository.findAllProductByCondition(builder , pageable);
+        List<ProductsSearchDTO> result = productsRepository.findAllProductByCondition(builder, pageable);
         return result;
     }
 
@@ -126,12 +132,12 @@ public class ProductsServiceImpl implements ProductsService {
 
     @Override
     @Transactional
-    public CreatedResponse createProduct(MultipartFile file, String data , MultipartFile avatar) {
+    public CreatedResponse createProduct(MultipartFile file, String data, MultipartFile avatar) {
         CreatedResponse response = new CreatedResponse();
         if (file.isEmpty()) {
             throw new CustomException("file undefined", CommonUtils.putError("file", "ERR_0034"));
         }
-        if (avatar.isEmpty()){
+        if (avatar.isEmpty()) {
             throw new CustomException("avatar undefined", CommonUtils.putError("avatar", "ERR_0034"));
         }
         ProductsDTO productsDTO = gson.fromJson(data, ProductsDTO.class);
@@ -140,7 +146,7 @@ public class ProductsServiceImpl implements ProductsService {
         }
         ProductsEntity productsEntity = productsConverter.toEntity(productsDTO);
         productsEntity.setPathFile(filesUtils.save(file, "/fileproducts/", filesUtils.generateFileName(file.getOriginalFilename())));
-        productsEntity.setAvatar(filesUtils.save(avatar , "/avatar_product/" , filesUtils.generateFileName(avatar.getOriginalFilename())));
+        productsEntity.setAvatar(filesUtils.save(avatar, "/avatar_product/", filesUtils.generateFileName(avatar.getOriginalFilename())));
         List<CategoryEntity> categoryEntities = categoryRepository.findCategoryEntitiesByIdIn(productsDTO.getCategoryIds());
         productsEntity.setCategorys(categoryEntities);
         ProductsEntity productsEntityAfterInsert = productsRepository.save(productsEntity);
@@ -150,8 +156,36 @@ public class ProductsServiceImpl implements ProductsService {
 
     @Override
     @Transactional
-    public UpdateResponse updateProduct(MultipartFile file, String data , MultipartFile avatar) {
-        return null;
+    public UpdateResponse updateProduct(MultipartFile file, String data, MultipartFile avatar) {
+        UpdateResponse response = new UpdateResponse();
+        ProductsDTO productsDTO = gson.fromJson(data, ProductsDTO.class);
+        ProductsEntity productsEntityOld = productsRepository.findById(productsDTO.getId()).get();
+        ProductsEntity productsEntity = productsConverter.toEntity(productsDTO);
+        if (avatar.isEmpty()) {
+            if (productsEntityOld.getAvatar().equals("")) {
+                throw new CustomException("avatar undefined", CommonUtils.putError("avatar", "ERR_0034"));
+            }
+            productsEntity.setAvatar(productsEntityOld.getAvatar());
+        } else {
+            productsEntity.setAvatar(filesUtils.save(avatar, "/avatar_product/", filesUtils.generateFileName(avatar.getOriginalFilename())));
+        }
+        if (file.isEmpty()) {
+            if (productsEntityOld.getPathFile().equals("")) {
+                throw new CustomException("file undefined", CommonUtils.putError("file", "ERR_0034"));
+            }
+            productsEntity.setPathFile(productsEntityOld.getPathFile());
+        } else {
+            productsEntity.setPathFile(filesUtils.save(file, "/fileproducts/", filesUtils.generateFileName(file.getOriginalFilename())));
+        }
+        if (productsDTO.getCategoryIds() == null || productsDTO.getCategoryIds().isEmpty()) {
+            throw new CustomException("category not null", CommonUtils.putError("data", "ERR_0034"));
+        }
+        productsEntity.setCreatedDate(productsEntityOld.getCreatedDate());
+        productsEntity.setModifiedDate(Instant.now());
+        List<CategoryEntity> categoryEntities = categoryRepository.findCategoryEntitiesByIdIn(productsDTO.getCategoryIds());
+        productsEntity.setCategorys(categoryEntities);
+        response.setIdUpdated(productsRepository.save(productsEntity).getId());
+        return response;
     }
 
     @Override
@@ -186,8 +220,8 @@ public class ProductsServiceImpl implements ProductsService {
         payment.setTransactions(transactions);
 
         RedirectUrls redirectUrls = new RedirectUrls();
-        redirectUrls.setCancelUrl("http://localhost:3000/checkout/cancel");
-        redirectUrls.setReturnUrl("http://localhost:3000/checkout/success");
+        redirectUrls.setCancelUrl("https://demowiget.web.app/checkout/cancel");
+        redirectUrls.setReturnUrl("https://demowiget.web.app/checkout/success");
         payment.setRedirectUrls(redirectUrls);
         Payment createdPayment;
 
@@ -287,7 +321,7 @@ public class ProductsServiceImpl implements ProductsService {
             if (productsEntity.getId() != null && userEntity.getId() != null) {
                 String template = "file for you: \n";
                 String subject = "WE SEND File To YOU";
-                Boolean resultSendMail = mailUtils.sendFileToMail(template, jwtTokenUtils.getEmailFromToken() , subject, productsEntity.getPathFile());
+                Boolean resultSendMail = mailUtils.sendFileToMail(template, jwtTokenUtils.getEmailFromToken(), subject, productsEntity.getPathFile());
                 if (!resultSendMail) {
                     throw new CustomException("cannot send email", CommonUtils.putError("email", "ERR_0013"));
                 }
@@ -323,11 +357,40 @@ public class ProductsServiceImpl implements ProductsService {
 
     @Override
     public Map<String, String> getProductTypes() {
-        Map<String , String> result = new HashMap<>();
+        Map<String, String> result = new HashMap<>();
         Stream.of(ProductTypes.values()).forEach(item -> {
-            result.put(item.name() , item.getValue());
+            result.put(item.name(), item.getValue());
         });
         return result;
+    }
+
+    @Override
+    public Map<String, String> createCheckoutSessionStripe(Long productId) throws StripeException {
+        ProductsEntity productsEntity = productsRepository.findById(productId).get();
+        Stripe.apiKey = secretKeyStripe;
+        SessionCreateParams params = SessionCreateParams.builder()
+                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl("https://demowiget.web.app/checkout/success")
+                .setCancelUrl("https://demowiget.web.app/checkout/cancel")
+                .addLineItem(
+                        SessionCreateParams.LineItem.builder()
+                                .setQuantity(1L)
+                                .setPriceData(
+                                        SessionCreateParams.LineItem.PriceData.builder()
+                                                .setCurrency("usd")
+                                                .setUnitAmount(Long.parseLong(productsEntity.getPrice().toString()))
+                                                .setProductData(
+                                                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                                                .setName(productsEntity.getProductName())
+                                                                .build()
+                                                ).build()
+                                ).build()
+                ).build();
+        Session session = Session.create(params);
+        Map<String, String> responseData = new HashMap();
+        responseData.put("id", session.getId());
+        return responseData;
     }
 
 

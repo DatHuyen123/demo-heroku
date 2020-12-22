@@ -37,4 +37,5 @@ public interface ProductsService {
     Map<String , Object> confirm(String id, Long productId) ;
     Map<String , Object> cancel(String id) ;
     Map<String , String> getProductTypes();
+    Map<String , String> createCheckoutSessionStripe(Long productId) throws StripeException;
 }

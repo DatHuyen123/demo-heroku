@@ -53,4 +53,9 @@ public class PaymentOfCustomerAPI {
         return ResponseEntity.ok(response);
     }
 
+    @RequestMapping(value = "/create-checkout-session" , method = RequestMethod.POST)
+    public ResponseEntity<?> checkOutStripe(HttpServletRequest request) throws StripeException {
+        return ResponseEntity.ok(productsService.createCheckoutSessionStripe(Long.parseLong(request.getParameter("id"))));
+    }
+
 }
