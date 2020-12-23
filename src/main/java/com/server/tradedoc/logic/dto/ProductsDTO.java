@@ -1,5 +1,7 @@
 package com.server.tradedoc.logic.dto;
 
+import com.server.tradedoc.logic.dto.custom.CategoryDTOCustom;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +15,7 @@ public class ProductsDTO extends AbstractDTO {
     private String avatar;
     private String type;
     private List<Long> categoryIds;
+    private List<CategoryDTOCustom> categorys;
 
     //method of DTO
     public String getProductName() {
@@ -69,5 +72,13 @@ public class ProductsDTO extends AbstractDTO {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public List<CategoryDTOCustom> getCategorys() {
+        return categorys;
+    }
+
+    public void setCategorys(List<CategoryDTOCustom> categorys) {
+        this.categorys = categorys;
     }
 }

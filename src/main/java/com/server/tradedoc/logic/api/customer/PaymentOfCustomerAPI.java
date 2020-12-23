@@ -7,10 +7,7 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -56,6 +53,11 @@ public class PaymentOfCustomerAPI {
     @RequestMapping(value = "/create-checkout-session" , method = RequestMethod.POST)
     public ResponseEntity<?> checkOutStripe(HttpServletRequest request) throws StripeException {
         return ResponseEntity.ok(productsService.createCheckoutSessionStripe(Long.parseLong(request.getParameter("id"))));
+    }
+
+    @RequestMapping(value = "/retrieve" , method = RequestMethod.POST)
+    public ResponseEntity<?> retrieveStripe(@RequestParam("idStripe") String idStripe) throws StripeException{
+        return ResponseEntity.ok(productsService.retrieveStripe(idStripe));
     }
 
 }

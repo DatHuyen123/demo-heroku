@@ -393,5 +393,13 @@ public class ProductsServiceImpl implements ProductsService {
         return responseData;
     }
 
+    @Override
+    public Map<String, Object> retrieveStripe(String idStripe) throws StripeException {
+        Map<String, Object> response = new HashMap<>();
+        Stripe.apiKey = secretKeyStripe;
+        Session session = Session.retrieve(idStripe);
+        if (session.getPaymentStatus().equals("")) {}
+        return response;
+    }
 
 }
