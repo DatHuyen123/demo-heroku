@@ -220,8 +220,8 @@ public class ProductsServiceImpl implements ProductsService {
         payment.setTransactions(transactions);
 
         RedirectUrls redirectUrls = new RedirectUrls();
-        redirectUrls.setCancelUrl("https://demowiget.web.app/checkout/cancel");
-        redirectUrls.setReturnUrl("https://demowiget.web.app/checkout/success");
+        redirectUrls.setCancelUrl("localhost:3000/checkout/cancel");
+        redirectUrls.setReturnUrl("localhost:3000/checkout/success");
         payment.setRedirectUrls(redirectUrls);
         Payment createdPayment;
 
@@ -371,8 +371,8 @@ public class ProductsServiceImpl implements ProductsService {
         SessionCreateParams params = SessionCreateParams.builder()
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("https://demowiget.web.app/checkout/success")
-                .setCancelUrl("https://demowiget.web.app/checkout/cancel")
+                .setSuccessUrl("localhost:3000/checkout/success")
+                .setCancelUrl("localhost:3000/checkout/cancel")
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
                                 .setQuantity(1L)
@@ -394,11 +394,35 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     @Override
-    public Map<String, Object> retrieveStripe(String idStripe) throws StripeException {
+    public Map<String, Object> retrieveStripe(String idStripe , Long productId) throws StripeException {
         Map<String, Object> response = new HashMap<>();
         Stripe.apiKey = secretKeyStripe;
         Session session = Session.retrieve(idStripe);
-        if (session.getPaymentStatus().equals("")) {}
+        if (session.getPaymentStatus().equals("paid")) {
+            ProductsEntity productsEntity = productsRepository.findById(productId).get();
+            UserEntity userEntity = userRepository.findById(jwtTokenUtils.getUserIdFromToken()).get();
+            if (productsEntity.getId() != null && userEntity.getId() != null) {
+                response.put("status", "success");
+                String template = "file for you: \n";
+                String subject = "WE SEND File To YOU";
+                Boolean resultSendMail = mailUtils.sendFileToMail(template, jwtTokenUtils.getEmailFromToken(), subject, productsEntity.getPathFile());
+                if (!resultSendMail) {
+                    throw new CustomException("cannot send email", CommonUtils.putError("email", "ERR_0013"));
+                }
+                HistoryPaymentDTO historyPaymentDTO = historyPaymentService.save(productsEntity, userEntity, PaymentType.VISA, session.getAmountTotal().toString());
+                response.put("status_history", historyPaymentDTO.getStatus() == 1 ? "success_send" : "error_send");
+            } else {
+                if (productsEntity.getId() == null) {
+                    throw new CustomException("cannot find product", CommonUtils.putError("productId", "ERR_0034"));
+                }
+                if (userEntity.getId() == null) {
+                    throw new CustomException("cannot find customer", CommonUtils.putError("customerId", "ERR_0034"));
+                }
+            }
+
+        } else {
+            throw new CustomException("unpaid payment stripe" , CommonUtils.putError("idStripe" , "EER_0025"));
+        }
         return response;
     }
 

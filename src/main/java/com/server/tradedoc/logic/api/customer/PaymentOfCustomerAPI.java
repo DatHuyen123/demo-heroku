@@ -55,9 +55,10 @@ public class PaymentOfCustomerAPI {
         return ResponseEntity.ok(productsService.createCheckoutSessionStripe(Long.parseLong(request.getParameter("id"))));
     }
 
-    @RequestMapping(value = "/retrieve" , method = RequestMethod.POST)
-    public ResponseEntity<?> retrieveStripe(@RequestParam("idStripe") String idStripe) throws StripeException{
-        return ResponseEntity.ok(productsService.retrieveStripe(idStripe));
+    @RequestMapping(value = "/stripe-retrieve" , method = RequestMethod.POST)
+    public ResponseEntity<?> retrieveStripe(@RequestParam("idStripe") String idStripe,
+                                            @RequestParam("productId") String productId) throws StripeException{
+        return ResponseEntity.ok(productsService.retrieveStripe(idStripe , Long.parseLong(productId)));
     }
 
 }
