@@ -371,8 +371,8 @@ public class ProductsServiceImpl implements ProductsService {
         SessionCreateParams params = SessionCreateParams.builder()
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("localhost:3000/checkout/success")
-                .setCancelUrl("localhost:3000/checkout/cancel")
+                .setSuccessUrl("https://demowiget.web.app/checkout/success")
+                .setCancelUrl("https://demowiget.web.app/checkout/cancel")
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
                                 .setQuantity(1L)
