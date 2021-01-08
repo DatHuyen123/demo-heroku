@@ -10,5 +10,5 @@ import java.util.List;
 public interface ProductsRepositoryCustom {
     List<ProductsSearchDTO> findAllProductByCondition(SearchProductBuilder builder , Pageable pageable);
     Long countProductByCondition(SearchProductBuilder builder);
-    List<ProductsEntity> findAllProductByCategoryIds(List<Long> categoryIds);
+    List<ProductsEntity> findAllProductByCategoryIds(List<Long> categoryIds , String collection);
 }

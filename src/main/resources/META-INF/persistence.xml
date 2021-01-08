@@ -7,5 +7,10 @@
         <class>com.server.tradedoc.logic.entity.CodeSignUpEntity</class>
         <class>com.server.tradedoc.logic.entity.UserEntity</class>
         <class>com.server.tradedoc.logic.entity.RoleEntity</class>
+        <class>com.server.tradedoc.logic.entity.BannerEntity</class>
+        <class>com.server.tradedoc.logic.entity.SignalsEntity</class>
+        <class>com.server.tradedoc.logic.entity.FilesProductEntity</class>
+        <class>com.server.tradedoc.logic.entity.BlogsEntity</class>
+        <class>com.server.tradedoc.logic.entity.DiscountEntity</class>
     </persistence-unit>
 </persistence>

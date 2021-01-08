@@ -15,12 +15,15 @@ import java.util.List;
                         @ColumnResult(name = "product_id", type = Long.class),
                         @ColumnResult(name = "product_name", type = String.class),
                         @ColumnResult(name = "category_name", type = String.class),
+                        @ColumnResult(name = "mt4_file", type = String.class),
+                        @ColumnResult(name = "mt5_file", type = String.class),
                         @ColumnResult(name = "price", type = Integer.class),
                         @ColumnResult(name = "path_file", type = String.class),
                         @ColumnResult(name = "description", type = String.class),
                         @ColumnResult(name = "type", type = String.class),
                         @ColumnResult(name = "avatar", type = String.class),
                         @ColumnResult(name = "title", type = String.class),
+                        @ColumnResult(name = "collection", type = String.class),
                         @ColumnResult(name = "created_by", type = String.class),
                         @ColumnResult(name = "modified_by", type = String.class),
                         @ColumnResult(name = "created_date", type = Instant.class),
@@ -38,6 +41,9 @@ public class ProductsEntity extends BaseEntity {
     @Column(name = "description" , columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "inputparam" , columnDefinition = "TEXT")
+    private String inputParam;
+
     @Column(name = "pathfile")
     private String pathFile;
 
@@ -50,8 +56,14 @@ public class ProductsEntity extends BaseEntity {
     @Column(name = "type")
     private String type;
 
+    @Column(name = "collection")
+    private String collection;
+
     @OneToMany(mappedBy = "products" , fetch = FetchType.LAZY)
     private List<ImageEntity> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "products" , fetch = FetchType.LAZY)
+    private List<FilesProductEntity> filesProducts = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "product_category" , joinColumns = @JoinColumn(name = "productid") ,
@@ -80,6 +92,14 @@ public class ProductsEntity extends BaseEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getInputParam() {
+        return inputParam;
+    }
+
+    public void setInputParam(String inputParam) {
+        this.inputParam = inputParam;
     }
 
     public String getPathFile() {
@@ -128,5 +148,21 @@ public class ProductsEntity extends BaseEntity {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public List<FilesProductEntity> getFilesProducts() {
+        return filesProducts;
+    }
+
+    public void setFilesProducts(List<FilesProductEntity> filesProducts) {
+        this.filesProducts = filesProducts;
+    }
+
+    public String getCollection() {
+        return collection;
+    }
+
+    public void setCollection(String collection) {
+        this.collection = collection;
     }
 }

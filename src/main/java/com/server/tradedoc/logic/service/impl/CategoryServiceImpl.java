@@ -5,6 +5,7 @@ import com.server.tradedoc.logic.converter.CategoryConverter;
 import com.server.tradedoc.logic.dto.CategoryDTO;
 import com.server.tradedoc.logic.dto.reponse.CountResponse;
 import com.server.tradedoc.logic.dto.reponse.DeleteResponse;
+import com.server.tradedoc.logic.dto.reponse.ShowAllCategoryResponse;
 import com.server.tradedoc.logic.entity.CategoryEntity;
 import com.server.tradedoc.logic.repository.CategoryRepository;
 import com.server.tradedoc.logic.service.CategoryService;
@@ -64,9 +65,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDTO> showAllCategory(SearchCategoryBuilder builder, Pageable pageable) {
+    public ShowAllCategoryResponse showAllCategory(SearchCategoryBuilder builder, Pageable pageable) {
+        ShowAllCategoryResponse response  = new ShowAllCategoryResponse();
         List<CategoryEntity> categoryEntities = categoryRepository.findAllCategory(builder, pageable);
-        return categoryConverter.toListDto(categoryEntities);
+        response.setCategorys(categoryConverter.toListDto(categoryEntities));
+        response.setCountItem(categoryRepository.countCategory(builder));
+        return response;
     }
 
     @Override

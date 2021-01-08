@@ -29,14 +29,11 @@ public class BuildMapUtils {
                     } else if (field.get(object) instanceof Long) {
                         result.put(field.getName().toLowerCase() , field.get(object));
                     } else {
-                        if (!field.getName().contains("Date") && !field.getName().contains("Type")) {
+                        if (!field.getName().contains("Date")) {
                             result.put(field.getName().toLowerCase() , BuildQueryUtils.formatLikeStringSql(field.get(object).toString().trim()));
                         } else {
                             if (field.getName().contains("Date")){
                                 result.put(field.getName().toLowerCase() , DateTimeUtils.convertStringRequestToTimesTamp(DateTimeUtils.formatDateTimeQuery(field.get(object).toString().trim()) , "dd/MM/yyyy"));
-                            }
-                            if (field.getName().contains("Type")) {
-                                result.put(field.getName().toLowerCase() , field.get(object).toString().trim());
                             }
                         }
                     }

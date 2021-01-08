@@ -12,6 +12,7 @@ public class SearchProductBuilder {
     private Integer priceTo;
     private Integer priceForm;
     private String productType;
+    private String collection;
 
     public String getCategoryName() {
         return categoryName;
@@ -28,6 +29,9 @@ public class SearchProductBuilder {
     public String getProductType() {
         return productType;
     }
+    public String getCollection() {
+        return collection;
+    }
 
     public SearchProductBuilder(builder builder){
         this.categoryName = builder.categoryName;
@@ -35,6 +39,7 @@ public class SearchProductBuilder {
         this.priceTo = builder.priceTo;
         this.priceForm = builder.priceForm;
         this.productType = builder.productType;
+        this.collection = builder.collection;
     }
 
     public static class builder{
@@ -43,6 +48,7 @@ public class SearchProductBuilder {
         private Integer priceTo;
         private Integer priceForm;
         private String productType;
+        private String collection;
 
         public builder setCategoryName(String categoryName) {
             this.categoryName = categoryName;
@@ -62,6 +68,10 @@ public class SearchProductBuilder {
         }
         public builder setProductType(String productType) {
             this.productType = productType;
+            return this;
+        }
+        public builder setCollection(String collection) {
+            this.collection = collection;
             return this;
         }
 

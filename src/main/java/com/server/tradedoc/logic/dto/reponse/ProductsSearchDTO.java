@@ -9,13 +9,17 @@ public class ProductsSearchDTO {
     private Long productId;
     private String productName;
     private String categoryName;
+    private String mt4File;
+    private String mt5File;
     private Integer price;
     private String pathFile;
     private String description;
     private String type;
     private String avatar;
     private String title;
+    private String collection;
     private List<ImageDTO> imageDTOS;
+    private List<String> types;
     private String createdBy;
     private String modifiedBy;
     private Instant createdDate;
@@ -24,16 +28,19 @@ public class ProductsSearchDTO {
     public ProductsSearchDTO() {
     }
 
-    public ProductsSearchDTO(Long productId, String productName, String categoryName, Integer price, String pathFile, String description, String type, String avatar, String title, String createdBy, String modifiedBy, Instant createdDate, Instant modifiedDate) {
+    public ProductsSearchDTO(Long productId, String productName, String categoryName, String mt4File, String mt5File, Integer price, String pathFile, String description, String type, String avatar, String title, String collection, String createdBy, String modifiedBy, Instant createdDate, Instant modifiedDate) {
         this.productId = productId;
         this.productName = productName;
         this.categoryName = categoryName;
+        this.mt4File = mt4File;
+        this.mt5File = mt5File;
         this.price = price;
         this.pathFile = pathFile;
         this.description = description;
         this.type = type;
         this.avatar = avatar;
         this.title = title;
+        this.collection = collection;
         this.createdBy = createdBy;
         this.modifiedBy = modifiedBy;
         this.createdDate = createdDate;
@@ -120,6 +127,14 @@ public class ProductsSearchDTO {
         this.imageDTOS = imageDTOS;
     }
 
+    public List<String> getTypes() {
+        return types;
+    }
+
+    public void setTypes(List<String> types) {
+        this.types = types;
+    }
+
     public String getCreatedBy() {
         return createdBy;
     }
@@ -150,5 +165,29 @@ public class ProductsSearchDTO {
 
     public void setModifiedDate(Instant modifiedDate) {
         this.modifiedDate = modifiedDate;
+    }
+
+    public String getCollection() {
+        return collection;
+    }
+
+    public void setCollection(String collection) {
+        this.collection = collection;
+    }
+
+    public String getMt4File() {
+        return mt4File;
+    }
+
+    public void setMt4File(String mt4File) {
+        this.mt4File = mt4File;
+    }
+
+    public String getMt5File() {
+        return mt5File;
+    }
+
+    public void setMt5File(String mt5File) {
+        this.mt5File = mt5File;
     }
 }

@@ -14,6 +14,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,6 +64,29 @@ public class MailUtils {
             javaMailSender.send((MimeMessage) message);
             return true;
         } catch (MessagingException | IOException e){
+            return false;
+        }
+    }
+
+    public Boolean sendMultiFileToMail(String template , String mailTo , String subject , List<String> pathFiles){
+        try {
+            Message message = javaMailSender.createMimeMessage();
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(mailTo));
+            message.setSubject(subject);
+            BodyPart messageBodyPart = new MimeBodyPart();
+            messageBodyPart.setText(template);
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(messageBodyPart);
+            for (String pathFile : pathFiles) {
+                MimeBodyPart attachmentPart = new MimeBodyPart();
+                String path = System.getProperty("user.home") + root + pathFile;
+                attachmentPart.attachFile(new File(path));
+                multipart.addBodyPart(attachmentPart);
+            }
+            message.setContent(multipart);
+            javaMailSender.send((MimeMessage) message);
+            return true;
+        } catch (MessagingException | IOException e) {
             return false;
         }
     }

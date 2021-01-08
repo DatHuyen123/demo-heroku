@@ -13,4 +13,5 @@ import java.util.List;
  * @author DatDV
  */
 public interface ProductsRepository extends JpaRepository<ProductsEntity , Long>, ProductsRepositoryCustom {
+
 }
