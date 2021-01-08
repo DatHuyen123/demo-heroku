@@ -45,7 +45,7 @@ public class PaymentOfCustomerAPI {
     @RequestMapping(value = "/stripe-retrieve" , method = RequestMethod.POST)
     public ResponseEntity<?> retrieveStripe(@RequestParam("idStripe") String idStripe,
                                             @RequestParam("productId") String productId,
-                                            @RequestParam("productType") String type) throws StripeException{
+                                            @RequestParam("type") String type) throws StripeException{
         return ResponseEntity.ok(productsService.retrieveStripe(idStripe , Long.parseLong(productId) , type));
     }
 
