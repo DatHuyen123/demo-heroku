@@ -47,7 +47,7 @@ public class BlogsAdminAPI {
     }
 
     @RequestMapping(value = "/find-one-blog", method = RequestMethod.GET)
-    public ResponseEntity<?> findOne(@RequestParam("id") Long id) {
+    public ResponseEntity<?> findOne(@RequestParam("id") Long id) throws URISyntaxException {
         return ResponseEntity.ok(blogsService.findOne(id));
     }
 

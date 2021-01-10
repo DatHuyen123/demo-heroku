@@ -18,6 +18,6 @@ public interface BlogsService {
     List<Long> delete(List<Long> ids);
     FindAllBlogsResponse findAll(Pageable pageable) throws URISyntaxException;
     CountResponse count();
-    BlogsDTO findOne(Long id);
+    BlogsDTO findOne(Long id) throws URISyntaxException;
     File getFileUsingIdFileBlog(Long idFileBlog);
 }

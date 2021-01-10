@@ -194,8 +194,9 @@ public class BlogsServiceImpl implements BlogsService {
      * @return
      */
     @Override
-    public BlogsDTO findOne(Long id) {
+    public BlogsDTO findOne(Long id) throws URISyntaxException {
         BlogsDTO result = blogsConverter.toDto(blogsRepository.findById(id).get());
+        result.setAvatar(filesUtils.genFilePath(result.getAvatar()));
         return result;
     }
 
