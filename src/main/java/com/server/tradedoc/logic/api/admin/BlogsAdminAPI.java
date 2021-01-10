@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URISyntaxException;
@@ -35,9 +32,9 @@ public class BlogsAdminAPI {
     }
 
     @RequestMapping(value = "/update-blog", method = RequestMethod.PUT)
-    public ResponseEntity<?> update(@RequestParam("avatar") MultipartFile avatar,
+    public ResponseEntity<?> update(@RequestPart(name = "avatar" , required = false) MultipartFile avatar,
                                     @RequestParam("data") String data,
-                                    @RequestParam("fileBlogs") List<MultipartFile> blogFiles) {
+                                    @RequestPart(name = "fileBlogs" , required = false) List<MultipartFile> blogFiles) {
         return ResponseEntity.ok(blogsService.update(data, avatar, blogFiles));
     }
 

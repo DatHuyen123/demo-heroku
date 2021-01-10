@@ -115,11 +115,11 @@ public class BlogsServiceImpl implements BlogsService {
         blogsEntity.setTitle(blogsDTO.getTitle());
         blogsEntity.setSubTitle(blogsDTO.getSubTitle());
         blogsEntity.setDescription(blogsDTO.getDescription());
-        if (!avatar.isEmpty()) {
+        if (avatar != null && !avatar.isEmpty()) {
             blogsEntity.setAvatar(filesUtils.save(avatar , "/avatar_blogs/" , filesUtils.generateFileName(avatar.getOriginalFilename())));
         }
         blogsEntity = blogsRepository.save(blogsEntity);
-        if (!blogFiles.get(0).isEmpty()) {
+        if (!blogFiles.isEmpty() && !blogFiles.get(0).isEmpty()) {
             filesBlogRepository.deleteByBlogs(blogsEntity);
             for (MultipartFile multipartFile : blogFiles) {
                 FilesBlogEntity filesBlogEntity = new FilesBlogEntity();
