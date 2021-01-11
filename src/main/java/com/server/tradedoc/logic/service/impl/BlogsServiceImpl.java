@@ -63,7 +63,7 @@ public class BlogsServiceImpl implements BlogsService {
     public CreatedResponse create(String data, MultipartFile avatar, List<MultipartFile> blogFiles) {
         BlogsDTO blogsDTO = gson.fromJson(data, BlogsDTO.class);
         CreatedResponse response = new CreatedResponse();
-        if (avatar.isEmpty()) {
+        if (avatar == null || avatar.isEmpty()) {
             throw new CustomException("avatar empty", CommonUtils.putError("avatar", "ERR_0034"));
         }
         if (blogsDTO.getTitle().equals("")) {
@@ -75,8 +75,8 @@ public class BlogsServiceImpl implements BlogsService {
         if (blogsDTO.getDescription().equals("")) {
             throw new CustomException("descriptio empty", CommonUtils.putError("blogsDTO", "ERR_0034"));
         }
-        if (blogFiles.get(0).isEmpty()) {
-            throw new CustomException("blogFiles empty", CommonUtils.putError("blogFiles", "ERR_0034"));
+        if (blogFiles.isEmpty() || blogFiles.get(0).isEmpty()) {
+            throw new CustomException("blog files empty", CommonUtils.putError("blogFiles", "ERR_0034"));
         }
         BlogsEntity blogsEntity = blogsConverter.toEntity(blogsDTO);
         blogsEntity.setAvatar(filesUtils.save(avatar, "/avatar_blogs/", filesUtils.generateFileName(avatar.getOriginalFilename())));

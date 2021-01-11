@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URISyntaxException;
 
+/**
+ * BannerClientAPI
+ *
+ * @author DatDV
+ */
 @RestController
 @RequestMapping("/public/api-client")
 public class BannerClientAPI {
@@ -16,6 +21,12 @@ public class BannerClientAPI {
     @Autowired
     private BannerService bannerService;
 
+    /**
+     * findAll
+     *
+     * @return
+     * @throws URISyntaxException
+     */
     @RequestMapping(value = "/find-all-banner" , method = RequestMethod.GET)
     public ResponseEntity<?> findAll() throws URISyntaxException {
         return ResponseEntity.ok(bannerService.findAllBannerByStatus());

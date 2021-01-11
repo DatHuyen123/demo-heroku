@@ -3,6 +3,7 @@ package com.server.tradedoc.logic.service;
 import com.server.tradedoc.logic.builder.SearchHistoryPaymentBuilder;
 import com.server.tradedoc.logic.dto.HistoryPaymentDTO;
 import com.server.tradedoc.logic.dto.reponse.CountResponse;
+import com.server.tradedoc.logic.dto.reponse.GetAllHistoryPaymentResponse;
 import com.server.tradedoc.logic.dto.reponse.HistoryPaymentSearchDTO;
 import com.server.tradedoc.logic.entity.ProductsEntity;
 import com.server.tradedoc.logic.entity.UserEntity;
@@ -17,7 +18,7 @@ public interface HistoryPaymentService {
 
     HistoryPaymentDTO save(ProductsEntity productsEntity, UserEntity userEntity, PaymentType paymentType, String total);
 
-    List<HistoryPaymentSearchDTO> getAllHistoryPayment(SearchHistoryPaymentBuilder builder, Pageable pageable);
+    GetAllHistoryPaymentResponse getAllHistoryPayment(SearchHistoryPaymentBuilder builder, Pageable pageable);
 
     CountResponse countByCondition(SearchHistoryPaymentBuilder builder);
 }

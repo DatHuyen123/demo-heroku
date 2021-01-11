@@ -169,17 +169,17 @@ public class ProductsServiceImpl implements ProductsService {
         String productType = StringUtils.join(productsDTO.getTypes(), ",");
 
         // validate empty params
-        if (fileMt5.get(0).isEmpty() && productType.contains("MT5")) {
+        if ((fileMt5.isEmpty() || fileMt5.get(0).isEmpty()) && productType.contains("MT5")) {
             throw new CustomException("fileMt5 empty", CommonUtils.putError("fileMt5", "ERR_0034"));
         } else if (!fileMt5.get(0).isEmpty() && !productType.contains("MT5")) {
             throw new CustomException("type MT5 empty", CommonUtils.putError("fileMt5", "ERR_0034"));
         }
-        if (fileMt4.get(0).isEmpty() && productType.contains("MT4")) {
+        if (( fileMt4.isEmpty() || fileMt4.get(0).isEmpty()) && productType.contains("MT4")) {
             throw new CustomException("fileMt4 empty", CommonUtils.putError("fileMt4", "ERR_0034"));
         } else if (!fileMt4.get(0).isEmpty() && !productType.contains("MT4")) {
             throw new CustomException("type MT4 empty", CommonUtils.putError("fileMt4", "ERR_0034"));
         }
-        if (avatar.isEmpty()) {
+        if (avatar == null || avatar.isEmpty()) {
             throw new CustomException("avatar empty", CommonUtils.putError("avatar", "ERR_0034"));
         }
         if (productsDTO.getCategoryIds() == null || productsDTO.getCategoryIds().isEmpty()) {
@@ -238,7 +238,7 @@ public class ProductsServiceImpl implements ProductsService {
      * @param fileMt4
      * @param data
      * @param avatar
-     * @return UpdateResponse {com.server.tradedoc.logic.dto.repons}
+     * @return UpdateResponse {com.server.tradedoc.logic.dto.reponse}
      */
     @Override
     @Transactional
@@ -261,7 +261,7 @@ public class ProductsServiceImpl implements ProductsService {
         productsDTO.setModifiedDate(Instant.now());
         productsDTO.setModifiedBy(jwtTokenUtils.getUserNameFromToken());
         productsEntity = productsConverter.toEntity(productsDTO);
-        if (!avatar.isEmpty()) {
+        if (avatar != null && !avatar.isEmpty()) {
             productsEntity.setAvatar(filesUtils.save(avatar, "/avatar_product/", filesUtils.generateFileName(avatar.getOriginalFilename())));
         }
         productsEntity.setType(productType);
@@ -271,7 +271,7 @@ public class ProductsServiceImpl implements ProductsService {
         ProductsEntity productsEntityAfterUpdate = productsRepository.save(productsEntity);
 
         // upload mt4 file of product
-        if (!fileMt4.get(0).isEmpty()) {
+        if (!fileMt4.isEmpty() && !fileMt4.get(0).isEmpty()) {
             filesProductRepository.deleteByProductsAndProductType(productsEntityAfterUpdate, ProductTypes.MT4.toString());
             for (MultipartFile multipartFile : fileMt4) {
                 FilesProductEntity filesProductEntity = new FilesProductEntity();
@@ -287,7 +287,7 @@ public class ProductsServiceImpl implements ProductsService {
         }
 
         // upload mt5 file of product
-        if (!fileMt5.get(0).isEmpty()) {
+        if (!fileMt5.isEmpty() && !fileMt5.get(0).isEmpty()) {
             filesProductRepository.deleteByProductsAndProductType(productsEntityAfterUpdate, ProductTypes.MT5.toString());
             for (MultipartFile multipartFile : fileMt5) {
                 FilesProductEntity filesProductEntity = new FilesProductEntity();

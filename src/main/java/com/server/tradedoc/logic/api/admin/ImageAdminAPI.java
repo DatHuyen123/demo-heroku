@@ -12,6 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+/**
+ * ImageAdminAPI
+ *
+ * @author DatDV
+ */
 @RestController
 @RequestMapping("/public/api-client")
 public class ImageAdminAPI {
@@ -19,6 +24,15 @@ public class ImageAdminAPI {
     @Autowired
     private ImageService imageService;
 
+    /**
+     * createImage
+     *
+     * @param image
+     * @param role
+     * @param model
+     * @return
+     * @throws URISyntaxException
+     */
     @RequestMapping(value = "/create-image", method = RequestMethod.POST)
     public ResponseEntity<?> createImage(@RequestParam("upload") MultipartFile image,
                                          @RequestParam("ckCsrfToken") String role,

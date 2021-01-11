@@ -5,6 +5,7 @@ import com.server.tradedoc.logic.builder.SearchHistoryPaymentBuilder;
 import com.server.tradedoc.logic.converter.HistoryPaymentConverter;
 import com.server.tradedoc.logic.dto.HistoryPaymentDTO;
 import com.server.tradedoc.logic.dto.reponse.CountResponse;
+import com.server.tradedoc.logic.dto.reponse.GetAllHistoryPaymentResponse;
 import com.server.tradedoc.logic.dto.reponse.HistoryPaymentSearchDTO;
 import com.server.tradedoc.logic.entity.HistoryPaymentEntity;
 import com.server.tradedoc.logic.entity.ProductsEntity;
@@ -25,6 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * HistoryPaymentServiceImpl
+ *
+ * @author DatDV
+ */
 @Service
 public class HistoryPaymentServiceImpl implements HistoryPaymentService {
 
@@ -37,6 +43,11 @@ public class HistoryPaymentServiceImpl implements HistoryPaymentService {
     @Autowired
     private FilesUtils filesUtils;
 
+    /**
+     * getAllPaymentType
+     *
+     * @return
+     */
     @Override
     public Map<String, String> getAllPaymentType() {
         Map<String, String> result = new HashMap<>();
@@ -46,6 +57,15 @@ public class HistoryPaymentServiceImpl implements HistoryPaymentService {
         return result;
     }
 
+    /**
+     * save
+     *
+     * @param productsEntity
+     * @param userEntity
+     * @param paymentType
+     * @param total
+     * @return
+     */
     @Override
     @Transactional
     public HistoryPaymentDTO save(ProductsEntity productsEntity, UserEntity userEntity, PaymentType paymentType, String total) {
@@ -61,8 +81,16 @@ public class HistoryPaymentServiceImpl implements HistoryPaymentService {
         return historyPaymentConverter.toDto(historyPaymentRepository.save(historyPaymentEntity));
     }
 
+    /**
+     * getAllHistoryPayment
+     *
+     * @param builder
+     * @param pageable
+     * @return
+     */
     @Override
-    public List<HistoryPaymentSearchDTO> getAllHistoryPayment(SearchHistoryPaymentBuilder builder, Pageable pageable) {
+    public GetAllHistoryPaymentResponse getAllHistoryPayment(SearchHistoryPaymentBuilder builder, Pageable pageable) {
+        GetAllHistoryPaymentResponse response = new GetAllHistoryPaymentResponse();
         List<HistoryPaymentSearchDTO> result = historyPaymentRepository.findAllHistoryPayment(builder, pageable);
         result.forEach(item -> {
             try {
@@ -71,9 +99,17 @@ public class HistoryPaymentServiceImpl implements HistoryPaymentService {
                 e.printStackTrace();
             }
         });
-        return result;
+        response.setHistoryPayments(result);
+        response.setCountItem(historyPaymentRepository.countByCondition(builder));
+        return response;
     }
 
+    /**
+     * countByCondition
+     *
+     * @param builder
+     * @return
+     */
     @Override
     public CountResponse countByCondition(SearchHistoryPaymentBuilder builder) {
         CountResponse result = new CountResponse();

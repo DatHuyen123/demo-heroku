@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+/**
+ *HistoryPaymentAPI
+ *
+ * @author DatDV
+ */
 @RestController
 @RequestMapping("/api/admin/history-payment")
 public class HistoryPaymentAPI {
@@ -20,11 +25,22 @@ public class HistoryPaymentAPI {
     @Autowired
     private HistoryPaymentService historyPaymentService;
 
+    /**
+     * getPaymentType
+     *
+     * @return
+     */
     @RequestMapping(value = "/get-all-payment-type" , method = RequestMethod.GET)
     public ResponseEntity<Map<String , String>> getPaymentType(){
         return ResponseEntity.ok(historyPaymentService.getAllPaymentType());
     }
 
+    /**
+     * getAllHistoryPayment
+     *
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "/get-all-history-payment" , method = RequestMethod.GET)
     public ResponseEntity<?> getAllHistoryPayment(@RequestParam Map<String , String> model){
         SearchHistoryPaymentBuilder builder = initSearchBuilder(model);
@@ -32,12 +48,24 @@ public class HistoryPaymentAPI {
         return ResponseEntity.ok(historyPaymentService.getAllHistoryPayment(builder , pageable));
     }
 
+    /**
+     * count
+     *
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "/count" , method = RequestMethod.GET)
     public ResponseEntity<?> count(@RequestParam Map<String , String> model){
         SearchHistoryPaymentBuilder builder = initSearchBuilder(model);
         return ResponseEntity.ok(historyPaymentService.countByCondition(builder));
     }
 
+    /**
+     * initSearchBuilder
+     *
+     * @param model
+     * @return
+     */
     private SearchHistoryPaymentBuilder initSearchBuilder(Map<String , String> model) {
         SearchHistoryPaymentBuilder builder = new SearchHistoryPaymentBuilder.builder()
                 .setEmailCustomer(model.get("emailCustomer"))

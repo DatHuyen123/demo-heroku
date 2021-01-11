@@ -7,6 +7,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * FilesProductRepository
+ *
+ * @author DatDV
+ */
 @Repository
 public interface FilesProductRepository extends JpaRepository<FilesProductEntity , Long> {
     List<FilesProductEntity> findByProductsAndProductType(ProductsEntity products , String productType);
