@@ -4,6 +4,8 @@ import com.server.tradedoc.constants.AppConstant;
 import com.server.tradedoc.logic.converter.DiscountConverter;
 import com.server.tradedoc.logic.dto.DiscountDTO;
 import com.server.tradedoc.logic.dto.reponse.CreatedResponse;
+import com.server.tradedoc.logic.dto.reponse.DiscountClientResponse;
+import com.server.tradedoc.logic.dto.reponse.NotificationDiscount;
 import com.server.tradedoc.logic.entity.DiscountEntity;
 import com.server.tradedoc.logic.repository.DiscountRepository;
 import com.server.tradedoc.logic.service.DiscountService;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 
 /**
  * DiscountServiceImpl
@@ -59,9 +62,14 @@ public class DiscountServiceImpl implements DiscountService {
             throw new CustomException("code discount already exist" , CommonUtils.putError("expireDateEnd" , "ERR_0034"));
         }
         CreatedResponse response = new CreatedResponse();
+        List<DiscountEntity> discountEntitiesDB = discountRepository.findAllByStatus(AppConstant.ACTIVE.ACTIVE_STATUS);
         discountDTO.setCode(discountDTO.getCode().toUpperCase());
         DiscountEntity discountEntity = discountConverter.toEntity(discountDTO);
-        discountEntity.setStatus(AppConstant.ACTIVE.ACTIVE_STATUS);
+        if (discountEntitiesDB.size() > 0) {
+            discountEntity.setStatus(AppConstant.ACTIVE.INACTIVE_STATUS);
+        } else {
+            discountEntity.setStatus(AppConstant.ACTIVE.ACTIVE_STATUS);
+        }
         discountEntity.setCreatedDate(Instant.now());
         discountEntity.setModifiedDate(Instant.now());
         response.setIdInserted(discountRepository.save(discountEntity).getId());
@@ -77,8 +85,7 @@ public class DiscountServiceImpl implements DiscountService {
     @Override
     public DiscountDTO findOne(Long id) {
         DiscountDTO discountDTO = discountConverter.toDto(discountRepository.findById(id).get());
-        DateTimeUtils.compareAfterDateTimeNow(discountDTO.getExpireDateEnd());
-        return null;
+        return discountDTO;
     }
 
     /**
@@ -87,8 +94,45 @@ public class DiscountServiceImpl implements DiscountService {
      * @return DiscountDTO {com.server.tradedoc.logic.dto}
      */
     @Override
-    public DiscountDTO findDiscountForClient() {
+    public DiscountClientResponse findDiscountForClient() {
+        DiscountClientResponse response = new DiscountClientResponse();
         DiscountEntity resultEntity = discountRepository.findByStatus(AppConstant.ACTIVE.ACTIVE_STATUS);
-        return discountConverter.toDto(resultEntity);
+        response.setDiscount(discountConverter.toDto(resultEntity));
+        if (DateTimeUtils.equalsDateTimeNow(resultEntity.getExpireDateStart())) {
+            return null;
+        }
+        if (!DateTimeUtils.compareAfterDateTimeNow(resultEntity.getExpireDateStart())) {
+            return null;
+        }
+        if (resultEntity != null) {
+            response.setTimeRemaining(Integer.parseInt(DateTimeUtils.minusDayAndDateTimeNow(resultEntity.getExpireDateEnd()).toString()));
+        } else {
+            response.setTimeRemaining(0);
+        }
+        return response;
+    }
+
+    /**
+     * notificationDiscount
+     *
+     * @return NotificationDiscount {com.server.tradedoc.logic.dto.reponse}
+     */
+    @Override
+    public NotificationDiscount notificationDiscount() {
+        NotificationDiscount response = new NotificationDiscount();
+        DiscountEntity discountEntity = discountRepository.findByStatus(AppConstant.ACTIVE.ACTIVE_STATUS);
+        if (discountEntity == null) {
+            return new NotificationDiscount();
+        }
+        Long timeRemaining = DateTimeUtils.minusDayAndDateTimeNow(discountEntity.getExpireDateEnd());
+        if (timeRemaining >= 3) {
+            response.setTimeRemaining(Integer.parseInt(timeRemaining.toString()));
+            response.setMessage("");
+        }
+        if (timeRemaining < 3) {
+            response.setTimeRemaining(Integer.parseInt(timeRemaining.toString()));
+            response.setMessage("thời hạn discount còn lại dưới 3 ngày lưu ý tắt trạng thái hoạt động của discount");
+        }
+        return response;
     }
 }

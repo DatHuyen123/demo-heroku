@@ -178,6 +178,7 @@ public class ProductsRepositoryImpl extends RepositoryCustomUtils<ProductsEntity
         sql.append("        p.productname, ");
         sql.append("        p.price, ");
         sql.append("        p.description, ");
+        sql.append("        p.inputparam, ");
         sql.append("        p.pathfile, ");
         sql.append("        p.title, ");
         sql.append("        p.avatar, ");

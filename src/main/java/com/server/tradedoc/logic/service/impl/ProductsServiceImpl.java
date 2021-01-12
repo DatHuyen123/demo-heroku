@@ -86,6 +86,9 @@ public class ProductsServiceImpl implements ProductsService {
     private JwtTokenUtils jwtTokenUtils;
 
     @Autowired
+    private DiscountRepository discountRepository;
+
+    @Autowired
     private APIContext apiContext;
 
     @Value("${stripe.public.key}")
@@ -109,6 +112,7 @@ public class ProductsServiceImpl implements ProductsService {
         if (!entitys.isEmpty()) {
             for (ProductsEntity productsEntity : entitys) {
                 productsEntity.setAvatar(filesUtils.genFilePath(productsEntity.getAvatar()));
+                productsEntity.setFilesProducts(new ArrayList<>());
                 ProductsDTO productsDTO = productsConverter.customConvertToDto(productsEntity);
                 result.add(productsDTO);
             }
@@ -174,7 +178,7 @@ public class ProductsServiceImpl implements ProductsService {
         } else if (!fileMt5.get(0).isEmpty() && !productType.contains("MT5")) {
             throw new CustomException("type MT5 empty", CommonUtils.putError("fileMt5", "ERR_0034"));
         }
-        if (( fileMt4.isEmpty() || fileMt4.get(0).isEmpty()) && productType.contains("MT4")) {
+        if ((fileMt4.isEmpty() || fileMt4.get(0).isEmpty()) && productType.contains("MT4")) {
             throw new CustomException("fileMt4 empty", CommonUtils.putError("fileMt4", "ERR_0034"));
         } else if (!fileMt4.get(0).isEmpty() && !productType.contains("MT4")) {
             throw new CustomException("type MT4 empty", CommonUtils.putError("fileMt4", "ERR_0034"));
