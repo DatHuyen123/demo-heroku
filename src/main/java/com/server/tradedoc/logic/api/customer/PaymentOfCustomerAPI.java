@@ -25,10 +25,10 @@ public class PaymentOfCustomerAPI {
     private ProductsService productsService;
 
     /**
-     * makePayment
+     * makePayment : make payment pay pal
      *
-     * @param payPalDTO
-     * @return
+     * @param payPalDTO : request param using make payment pay pal
+     * @return Map<String , Object>
      */
     @RequestMapping(value = "/paypal/make/payment" , method = RequestMethod.POST)
     public Map<String , Object> makePayment(@RequestBody PayPalDTO payPalDTO){
@@ -58,7 +58,7 @@ public class PaymentOfCustomerAPI {
      */
     @RequestMapping(value = "/create-checkout-session" , method = RequestMethod.POST)
     public ResponseEntity<?> checkOutStripe(HttpServletRequest request) throws StripeException {
-        return ResponseEntity.ok(productsService.createCheckoutSessionStripe(Long.parseLong(request.getParameter("id"))));
+        return ResponseEntity.ok(productsService.createCheckoutSessionStripe(Long.parseLong(request.getParameter("id")) , request.getParameter("discountCode")));
     }
 
     /**

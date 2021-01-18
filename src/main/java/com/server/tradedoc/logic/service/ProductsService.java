@@ -33,6 +33,6 @@ public interface ProductsService {
     ProductsDTO getById(Long id , String role);
     Map<String , String> getProductTypes();
     Map<String , String> getProductCollection();
-    Map<String , String> createCheckoutSessionStripe(Long productId) throws StripeException;
+    Map<String , String> createCheckoutSessionStripe(Long productId , String discountCode) throws StripeException;
     Map<String, Object> retrieveStripe(String idStripe, Long productId, String type) throws StripeException;
 }

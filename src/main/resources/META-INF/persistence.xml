@@ -12,5 +12,7 @@
         <class>com.server.tradedoc.logic.entity.FilesProductEntity</class>
         <class>com.server.tradedoc.logic.entity.BlogsEntity</class>
         <class>com.server.tradedoc.logic.entity.DiscountEntity</class>
+        <class>com.server.tradedoc.logic.entity.FilesBlogEntity</class>
+        <class>com.server.tradedoc.logic.entity.FilesProductEntity</class>
     </persistence-unit>
 </persistence>

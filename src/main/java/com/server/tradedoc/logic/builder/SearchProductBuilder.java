@@ -7,15 +7,15 @@ package com.server.tradedoc.logic.builder;
  */
 public class SearchProductBuilder {
 
-    private String categoryName;
+    private Long categoryId;
     private String productName;
     private Integer priceTo;
     private Integer priceForm;
     private String productType;
     private String collection;
 
-    public String getCategoryName() {
-        return categoryName;
+    public Long getCategoryId() {
+        return categoryId;
     }
     public String getProductName() {
         return productName;
@@ -34,7 +34,7 @@ public class SearchProductBuilder {
     }
 
     public SearchProductBuilder(builder builder){
-        this.categoryName = builder.categoryName;
+        this.categoryId = builder.categoryId;
         this.productName = builder.productName;
         this.priceTo = builder.priceTo;
         this.priceForm = builder.priceForm;
@@ -43,17 +43,18 @@ public class SearchProductBuilder {
     }
 
     public static class builder{
-        private String categoryName;
+        private Long categoryId;
         private String productName;
         private Integer priceTo;
         private Integer priceForm;
         private String productType;
         private String collection;
 
-        public builder setCategoryName(String categoryName) {
-            this.categoryName = categoryName;
+        public builder setCategoryId(Long categoryId) {
+            this.categoryId = categoryId;
             return this;
         }
+
         public builder setProductName(String productName) {
             this.productName = productName;
             return this;

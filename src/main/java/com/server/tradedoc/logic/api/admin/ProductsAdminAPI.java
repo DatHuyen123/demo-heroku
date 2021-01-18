@@ -129,7 +129,7 @@ public class ProductsAdminAPI {
 
     private SearchProductBuilder initSearchProductBuilder(Map<String, String> model) {
         SearchProductBuilder builder = new SearchProductBuilder.builder()
-                .setCategoryName(model.get("categoryName"))
+                .setCategoryId(model.get("categoryId") != "" ? Long.parseLong(model.get("categoryId")) : null)
                 .setPriceForm(model.get("priceForm") != "" ? Integer.parseInt(model.get("priceForm")) : null)
                 .setPriceTo(model.get("priceTo") != "" ? Integer.parseInt(model.get("priceTo")) : null)
                 .setProductName(model.get("productName"))

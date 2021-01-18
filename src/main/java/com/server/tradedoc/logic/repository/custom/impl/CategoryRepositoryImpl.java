@@ -23,6 +23,12 @@ public class CategoryRepositoryImpl extends RepositoryCustomUtils<CategoryEntity
     @Autowired
     private BuildMapUtils buildMapUtils;
 
+    /**
+     * findCategoryUseByIdIn
+     *
+     * @param ids
+     * @return
+     */
     @Override
     public List<CategoryEntity> findCategoryUseByIdIn(List<Long> ids) {
         StringBuilder sql = new StringBuilder("SELECT c.* FROM category c INNER JOIN product_category pc ON c.id = pc.categoryid ");
@@ -32,17 +38,26 @@ public class CategoryRepositoryImpl extends RepositoryCustomUtils<CategoryEntity
         return this.getResultList(sql.toString(), parameter, CategoryEntity.class);
     }
 
+    /**
+     * findAllCategory
+     *
+     * @param builder
+     * @param pageable
+     * @return
+     */
     @Override
     public List<CategoryEntity> findAllCategory(SearchCategoryBuilder builder, Pageable pageable) {
         Map<String, Object> parameter = buildMapUtils.buildMapSearch(builder);
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT A.id AS category_id,\n" +
-                "\tA.createdby AS created_by,\n" +
-                "\tA.createddate AS created_date,\n" +
-                "\tA.modifiedby AS modified_by,\n" +
-                "\tA.modifieddate AS modified_date,\n" +
-                "\tA.code AS category_code,\n" +
-                "\tA.name AS category_name FROM category A ");
+        sql.append("SELECT ");
+        sql.append("    A.id AS category_id, ");
+        sql.append("    A.createdby AS created_by, ");
+        sql.append("    A.createddate AS created_date, ");
+        sql.append("    A.modifiedby AS modified_by, ");
+        sql.append("    A.modifieddate AS modified_date, ");
+        sql.append("    A.code AS category_code, ");
+        sql.append("    A.name AS category_name ");
+        sql.append("FROM category A ");
         sql.append("WHERE 1=1 ");
         if (!builder.getName().equals("")) {
             sql.append("   AND LOWER(A.name) LIKE :name ");
@@ -50,11 +65,19 @@ public class CategoryRepositoryImpl extends RepositoryCustomUtils<CategoryEntity
         return this.getResultList(sql.toString(), parameter, "findAllCategory", pageable);
     }
 
+    /**
+     * countCategory
+     *
+     * @param builder
+     * @return
+     */
     @Override
     public Long countCategory(SearchCategoryBuilder builder) {
         Map<String, Object> parameter = buildMapUtils.buildMapSearch(builder);
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT COUNT(*) FROM category A ");
+        sql.append("SELECT ");
+        sql.append("   COUNT(*) ");
+        sql.append("FROM category A ");
         sql.append("WHERE 1=1 ");
         if (!builder.getName().equals("")) {
             sql.append("   AND LOWER(A.name) LIKE LOWER(:name) ");

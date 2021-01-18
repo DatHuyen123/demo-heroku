@@ -9,6 +9,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.net.URISyntaxException;
 import java.util.List;
 
+/**
+ * BannerService
+ *
+ * @author DatDV
+ */
 public interface BannerService {
     CreatedResponse create(MultipartFile image);
     UpdateResponse updateStatusBanner(Long id);

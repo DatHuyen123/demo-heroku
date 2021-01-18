@@ -1,38 +1,36 @@
 package com.server.tradedoc.utils.error;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.ConcurrencyFailureException;
-import org.springframework.http.HttpHeaders;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import org.zalando.problem.Problem;
-import org.zalando.problem.ProblemBuilder;
-import org.zalando.problem.Status;
-import org.zalando.problem.spring.web.advice.ProblemHandling;
-import org.zalando.problem.spring.web.advice.security.SecurityAdviceTrait;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import static org.zalando.problem.spring.web.advice.MediaTypes.PROBLEM;
-
+/**
+ * GlobalDefaultExceptionHandler
+ *
+ * @author DatDV
+ */
 @ControllerAdvice
 public class GlobalDefaultExceptionHandler extends ResponseEntityExceptionHandler {
 
+    /**
+     * handleCityNotFoundException
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Object> handleCityNotFoundException(
             CustomException ex, WebRequest request) {
@@ -42,5 +40,44 @@ public class GlobalDefaultExceptionHandler extends ResponseEntityExceptionHandle
         ex.getExtensions().put("timestamp", LocalDateTime.now());
 
         return new ResponseEntity<>(ex.getExtensions(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * handleMultipartException
+     *
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(MultipartException.class)
+    public ResponseEntity<Object> handleMultipartException(MultipartException ex) {
+        String maxFileSize = getMaxUploadFileSize(ex);
+        Map<String, Object> body = new HashMap<>();
+        if (maxFileSize != null) {
+            body.put("message", "Uploaded file is too large.  File size cannot exceed 20MB.");
+        } else {
+            body.put("message", ex.getMessage());
+        }
+        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private String getMaxUploadFileSize(MultipartException ex) {
+        if (ex instanceof MaxUploadSizeExceededException) {
+            return asReadableFileSize(((MaxUploadSizeExceededException) ex).getMaxUploadSize());
+        }
+        String msg = ex.getMessage();
+        if (msg.contains("SizeLimitExceededException")) {
+            String maxFileSize = msg.substring(msg.indexOf("maximum")).replaceAll("\\D+", "");
+            if (StringUtils.isNumeric(maxFileSize)) {
+                return asReadableFileSize(Long.valueOf(maxFileSize));
+            }
+        }
+        return null;
+    }
+
+    private static String asReadableFileSize(long size) {
+        if (size <= 0) return "0";
+        final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 }

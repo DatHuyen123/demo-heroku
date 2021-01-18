@@ -27,22 +27,52 @@ public class FilesUtils {
     @Value("${project.domain}")
     private String url;
 
+    @Value("${directory.client.request.file}")
+    private String directoryClientRequest;
+
+    /**
+     * generateFileName : generate file name using save to dir
+     *
+     * @param fileNameClient : name file client request
+     * @return String {java.lang.String}
+     */
     public String generateFileName(String fileNameClient) {
         String dateTimeNow = DateTimeUtils.getDateTimeNow("yyyyMMddHHmmssSSS");
         String[] splitString = fileNameClient.split("\\.");
         return StringUtils.substringBeforeLast(fileNameClient, ".") + "_" + dateTimeNow + "." + splitString[splitString.length - 1];
     }
 
+    /**
+     * genFilePath
+     *
+     * @param urlFile
+     * @return
+     * @throws URISyntaxException
+     */
     public String genFilePath(String urlFile) throws URISyntaxException {
-        return this.getDomainName() + root + urlFile;
+        return this.getDomainName() + directoryClientRequest + urlFile;
     }
 
+    /**
+     * getDomainName
+     *
+     * @return String {java.lang.String}
+     * @throws URISyntaxException
+     */
     public String getDomainName() throws URISyntaxException {
         URI uri = new URI(url);
         String domain = uri.toString();
         return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 
+    /**
+     * save : save file to dir
+     *
+     * @param file     : file use save to dir
+     * @param path     : path use save file
+     * @param fileName : file name
+     * @return String {java.lang.String}
+     */
     public String save(MultipartFile file, String path, String fileName) {
         this.createFile();
         File fileMkdir = new File(System.getProperty("user.home") + root + path);
@@ -60,8 +90,32 @@ public class FilesUtils {
         return path + fileName;
     }
 
+    /**
+     * delete from dir
+     *
+     * @param path : path file for delete
+     * @return Boolean {java.lang.Boolean}
+     */
+    public Boolean delete(String path) {
+        try {
+            File file = new File(System.getProperty("user.home") + root + path);
+            if (file.delete()) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            throw new FileStorageException("Could not store file " + path + ". Please try again!", e);
+        }
+    }
+
+    /**
+     * getFileFormDir : get file form dir
+     *
+     * @param pathFile : path file use get file
+     * @return File {java.io.File}
+     */
     public File getFileFormDir(String pathFile) {
-        String path = System.getProperty("user.home") + root + pathFile;
+        String path = root + pathFile;
         return new File(path);
     }
 

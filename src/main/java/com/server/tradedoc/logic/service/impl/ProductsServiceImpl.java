@@ -4,16 +4,14 @@ import com.google.gson.Gson;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
+import com.server.tradedoc.constants.AppConstant;
 import com.server.tradedoc.logic.builder.SearchProductBuilder;
 import com.server.tradedoc.logic.converter.ProductsConverter;
 import com.server.tradedoc.logic.dto.HistoryPaymentDTO;
 import com.server.tradedoc.logic.dto.ProductsDTO;
 import com.server.tradedoc.logic.dto.paymentrequest.PayPalDTO;
 import com.server.tradedoc.logic.dto.reponse.*;
-import com.server.tradedoc.logic.entity.CategoryEntity;
-import com.server.tradedoc.logic.entity.FilesProductEntity;
-import com.server.tradedoc.logic.entity.ProductsEntity;
-import com.server.tradedoc.logic.entity.UserEntity;
+import com.server.tradedoc.logic.entity.*;
 import com.server.tradedoc.logic.enums.*;
 import com.server.tradedoc.logic.repository.*;
 import com.server.tradedoc.logic.service.HistoryPaymentService;
@@ -382,11 +380,22 @@ public class ProductsServiceImpl implements ProductsService {
      */
     @Override
     public Map<String, Object> createPayment(PayPalDTO payPalDTO) {
+        DiscountEntity discountEntity = null;
+        ProductsEntity productsEntity = productsRepository.findById(payPalDTO.getProductId()).get();
+        Integer totalAmount = productsEntity.getPrice();
+        if (!payPalDTO.getDiscountCode().equals("")) {
+            discountEntity = discountRepository.findByCodeAndStatus(payPalDTO.getDiscountCode() , AppConstant.ACTIVE.ACTIVE_STATUS);
+            if (discountEntity == null) {
+                throw new CustomException("discount code not active" , CommonUtils.putError("discountCode" , "ERR_0034"));
+            }
+            totalAmount = (productsEntity.getPrice() / 100) * (100 - discountEntity.getDiscountPercent());
+        }
+
         Map<String, Object> response = new HashMap<String, Object>();
 
         Amount amount = new Amount();
         amount.setCurrency(payPalDTO.getCurrent());
-        amount.setTotal(productsRepository.findById(payPalDTO.getProductId()).get().getPrice().toString());
+        amount.setTotal(totalAmount.toString());
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
         List<Transaction> transactions = new ArrayList<>();
@@ -555,8 +564,17 @@ public class ProductsServiceImpl implements ProductsService {
      * @throws StripeException
      */
     @Override
-    public Map<String, String> createCheckoutSessionStripe(Long productId) throws StripeException {
+    public Map<String, String> createCheckoutSessionStripe(Long productId , String discountCode) throws StripeException {
+        DiscountEntity discountEntity = null;
         ProductsEntity productsEntity = productsRepository.findById(productId).get();
+        Integer totalAmount = productsEntity.getPrice();
+        if (!discountCode.equals("")) {
+            discountEntity = discountRepository.findByCodeAndStatus(discountCode , AppConstant.ACTIVE.ACTIVE_STATUS);
+            if (discountEntity == null) {
+                throw new CustomException("discount code not active" , CommonUtils.putError("discountCode" , "ERR_0077"));
+            }
+            totalAmount = (productsEntity.getPrice() / 100) * (100 - discountEntity.getDiscountPercent());
+        }
         Stripe.apiKey = secretKeyStripe;
         SessionCreateParams params = SessionCreateParams.builder()
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
@@ -569,7 +587,7 @@ public class ProductsServiceImpl implements ProductsService {
                                 .setPriceData(
                                         SessionCreateParams.LineItem.PriceData.builder()
                                                 .setCurrency("usd")
-                                                .setUnitAmount(Long.parseLong(productsEntity.getPrice().toString()))
+                                                .setUnitAmount(Long.parseLong(totalAmount.toString()))
                                                 .setProductData(
                                                         SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                                 .setName(productsEntity.getProductName())

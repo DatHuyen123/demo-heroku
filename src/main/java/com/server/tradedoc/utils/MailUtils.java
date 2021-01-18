@@ -33,6 +33,15 @@ public class MailUtils {
     @Autowired
     private JavaMailSender javaMailSender;
 
+    /**
+     * sendMailUseTemplate : send mail use template
+     *
+     * @param template
+     * @param params
+     * @param mailTo
+     * @param subject
+     * @return Boolean {java.lang.Boolean}
+     */
     public Boolean sendMailUseTemplate(String template , Map<String , Object> params , String mailTo , String subject) {
         try{
             MimeMessage message = javaMailSender.createMimeMessage();
@@ -47,8 +56,17 @@ public class MailUtils {
         }
     }
 
+    /**
+     * sendFileToMail : send one file to mail customer
+     *
+     * @param template
+     * @param mailTo
+     * @param subject
+     * @param pathFile
+     * @return Boolean {java.lang.Boolean}
+     */
     public Boolean sendFileToMail(String template , String mailTo , String subject , String pathFile){
-        String pathFileForSend = System.getProperty("user.home") + root + pathFile;
+        String pathFileForSend = root + pathFile;
         try{
             Message message = javaMailSender.createMimeMessage();
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(mailTo));
@@ -68,6 +86,15 @@ public class MailUtils {
         }
     }
 
+    /**
+     * sendMultiFileToMail : send multi file to mail customer
+     *
+     * @param template
+     * @param mailTo
+     * @param subject
+     * @param pathFiles
+     * @return Boolean {java.lang.Boolean}
+     */
     public Boolean sendMultiFileToMail(String template , String mailTo , String subject , List<String> pathFiles){
         try {
             Message message = javaMailSender.createMimeMessage();
@@ -79,7 +106,7 @@ public class MailUtils {
             multipart.addBodyPart(messageBodyPart);
             for (String pathFile : pathFiles) {
                 MimeBodyPart attachmentPart = new MimeBodyPart();
-                String path = System.getProperty("user.home") + root + pathFile;
+                String path = root + pathFile;
                 attachmentPart.attachFile(new File(path));
                 multipart.addBodyPart(attachmentPart);
             }
@@ -94,6 +121,12 @@ public class MailUtils {
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[a-z][a-z0-9_\\.]{5,32}@[a-z0-9]{2,}(\\.[a-z0-9]{2,4}){1,2}$", Pattern.CASE_INSENSITIVE);
 
+    /**
+     * validate format string email
+     *
+     * @param emailStr : email string using validate
+     * @return boolean
+     */
     public boolean validate(String emailStr) {
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
         return matcher.find();

@@ -43,7 +43,7 @@ public class BannerServiceImpl implements BannerService {
      * create
      *
      * @param image
-     * @return CreatedResponse
+     * @return CreatedResponse {com.server.tradedoc.logic.dto.reponse}
      */
     @Override
     @Transactional
@@ -67,7 +67,7 @@ public class BannerServiceImpl implements BannerService {
      * updateStatusBanner
      *
      * @param id
-     * @return UpdateResponse
+     * @return UpdateResponse {com.server.tradedoc.logic.dto.reponse}
      */
     @Override
     @Transactional
@@ -92,14 +92,14 @@ public class BannerServiceImpl implements BannerService {
      * delete
      *
      * @param id
-     * @return DeleteResponse
+     * @return DeleteResponse {com.server.tradedoc.logic.dto.reponse}
      */
     @Override
     @Transactional
     public DeleteResponse delete(Long id) {
         DeleteResponse response = new DeleteResponse();
-        response.setIdsDeleted(Arrays.asList(id));
         bannerRepository.deleteById(id);
+        response.setIdsDeleted(Arrays.asList(id));
         return response;
     }
 

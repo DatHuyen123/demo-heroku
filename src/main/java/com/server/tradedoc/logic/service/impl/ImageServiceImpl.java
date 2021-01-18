@@ -27,10 +27,18 @@ public class ImageServiceImpl implements ImageService {
         }
         ImageResponse response = new ImageResponse();
         String nameFileServer = filesUtils.generateFileName(image.getOriginalFilename());
-        String fileName = filesUtils.save(image, "/thumbnail/", nameFileServer);
+        String fileName = filesUtils.save(image, "/image/", nameFileServer);
         response.setUrl(filesUtils.genFilePath(fileName));
         response.setFileName(nameFileServer);
         response.setUploaded(1);
         return response;
+    }
+
+    @Override
+    public void deleteFileFormDir(String fileName , String role) {
+        if (!role.equals("ROLE_MANAGER")) {
+            throw new CustomException("access_denied" , CommonUtils.putError("role", "ERR_0021"));
+        }
+        filesUtils.delete("/image/" + fileName);
     }
 }

@@ -74,8 +74,8 @@ public class ProductsRepositoryImpl extends RepositoryCustomUtils<ProductsEntity
         if (!builder.getProductName().equals("")) {
             sql.append("AND pro.productname LIKE :productname ");
         }
-        if (!builder.getCategoryName().equals("")) {
-            sql.append("AND ca.name LIKE :categoryname ");
+        if (builder.getCategoryId() != null) {
+            sql.append("AND ca.id = :categoryid ");
         }
         if (!builder.getProductType().equals("")) {
             sql.append("AND pro.type LIKE :producttype ");
@@ -143,8 +143,8 @@ public class ProductsRepositoryImpl extends RepositoryCustomUtils<ProductsEntity
         if (!builder.getProductName().equals("")) {
             sql.append("AND pro.productname LIKE :productname ");
         }
-        if (!builder.getCategoryName().equals("")) {
-            sql.append("AND ca.name LIKE :categoryname ");
+        if (builder.getCategoryId() != null) {
+            sql.append("AND ca.id = :categoryid ");
         }
         if (!builder.getProductType().equals("")) {
             sql.append("AND pro.type LIKE :producttype ");

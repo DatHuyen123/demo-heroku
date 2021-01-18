@@ -99,8 +99,6 @@ public class DateTimeUtils {
      */
     public static Boolean equalsDateTimeNow(Date date) {
         Date dateNow = new Date(System.currentTimeMillis());
-        date.getTime();
-        dateNow.getTime();
         if (date.equals(dateNow)) {
             return true;
         }
@@ -133,7 +131,26 @@ public class DateTimeUtils {
         Calendar calendarDateNow = Calendar.getInstance();
         calendarDateEnd.setTime(date);
         calendarDateNow.setTime(dateNow);
-        return (calendarDateEnd.getTime().getTime() - calendarDateNow.getTime().getTime()) / (24 * 3600 * 1000) + 2;
+        Long addTime = 2L;
+        if ((calendarDateEnd.get(Calendar.DAY_OF_MONTH) - calendarDateNow.get(Calendar.DAY_OF_MONTH)) == 0) {
+            addTime = 1L;
+        }
+        return (calendarDateEnd.getTime().getTime() - calendarDateNow.getTime().getTime()) / (24 * 3600 * 1000) + addTime;
+    }
+
+    /**
+     * convertDateToStringUseFormatDate
+     *
+     * @param date : date for format
+     * @param format : String format of date
+     * @return String {java.lang.String}
+     */
+    public static String convertDateToStringUseFormatDate(Date date , String format) {
+        if (format == null) {
+            format = "dd-MM-yyyy";
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        return simpleDateFormat.format(date);
     }
 
 }

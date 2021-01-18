@@ -23,31 +23,38 @@ public class HistoryPaymentRepositoryImpl extends RepositoryCustomUtils<HistoryP
     @Autowired
     private BuildMapUtils buildMapUtils;
 
+    /**
+     * findAllHistoryPayment
+     *
+     * @param builder
+     * @param pageable
+     * @return
+     */
     @Override
     public List<HistoryPaymentSearchDTO> findAllHistoryPayment(SearchHistoryPaymentBuilder builder, Pageable pageable) {
         Map<String, Object> parameter = buildMapUtils.buildMapSearch(builder);
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT                                            " +
-                "   his.paymenttype AS payment_type,              " +
-                "   his.total AS payment_total,                   " +
-                "   his.customerid AS customer_id,                " +
-                "   CASE                                            " +
-                "       WHEN his.status = 1 THEN 'Thành Công'   " +
-                "       WHEN his.status = 0 THEN 'Thất Bại'     " +
-                "   END AS history_status,                           " +
-                "   cus.fullname AS customer_name,              " +
-                "   cus.email AS customer_email,                  " +
-                "   cus.numberphone AS customer_phone,            " +
-                "   pro.price AS product_price,                   " +
-                "   pro.productname AS product_name,              " +
-                "   pro.avatar AS product_avatar,                 " +
-                "   his.createddate AS created_date,              " +
-                "   his.modifieddate AS modified_date            " +
-                "FROM                                             " +
-                "users cus                                          " +
-                "INNER JOIN history_payment his ON cus.id = his.customerid " +
-                "INNER JOIN products pro ON pro.id = his.productid " +
-                "WHERE 1=1 ");
+        sql.append("SELECT                                            ");
+        sql.append("    his.paymenttype AS payment_type,              ");
+        sql.append("    his.total AS payment_total,                   ");
+        sql.append("    his.customerid AS customer_id,                ");
+        sql.append("    CASE ");
+        sql.append("        WHEN his.status = 1 THEN 'Thành Công'   ");
+        sql.append("        WHEN his.status = 0 THEN 'Thất Bại'     ");
+        sql.append("    END AS history_status,                       ");
+        sql.append("    cus.fullname AS customer_name,              ");
+        sql.append("    cus.email AS customer_email,                  ");
+        sql.append("    cus.numberphone AS customer_phone,            ");
+        sql.append("    pro.price AS product_price,                   ");
+        sql.append("    pro.productname AS product_name,             ");
+        sql.append("    pro.avatar AS product_avatar,                 ");
+        sql.append("    his.createddate AS created_date,              ");
+        sql.append("    his.modifieddate AS modified_date            ");
+        sql.append("FROM ");
+        sql.append("users cus                                          ");
+        sql.append("INNER JOIN history_payment his ON cus.id = his.customerid ");
+        sql.append("INNER JOIN products pro ON pro.id = his.productid ");
+        sql.append("WHERE 1=1 ");
         if (!builder.getCustomerName().equals("")) {
             sql.append("AND cus.fullname LIKE :customername ");
         }
@@ -75,16 +82,22 @@ public class HistoryPaymentRepositoryImpl extends RepositoryCustomUtils<HistoryP
         return this.getResultList(sql.toString(), parameter, "findAllHistoryPayment", pageable);
     }
 
+    /**
+     * countByCondition
+     *
+     * @param builder
+     * @return
+     */
     @Override
     public Long countByCondition(SearchHistoryPaymentBuilder builder) {
         Map<String, Object> parameter = buildMapUtils.buildMapSearch(builder);
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT            COUNT(*)                   " +
-                "FROM                                             " +
-                "users cus                                          " +
-                "INNER JOIN history_payment his ON cus.id = his.customerid " +
-                "INNER JOIN products pro ON pro.id = his.productid " +
-                "WHERE 1=1 ");
+        sql.append("SELECT            COUNT(*)                   ");
+        sql.append("FROM                                             ");
+        sql.append("users cus                                        ");
+        sql.append("INNER JOIN history_payment his ON cus.id = his.customerid ");
+        sql.append("INNER JOIN products pro ON pro.id = his.productid ");
+        sql.append("WHERE 1=1 ");
         if (!builder.getCustomerName().equals("")) {
             sql.append("AND cus.fullname LIKE :customername ");
         }

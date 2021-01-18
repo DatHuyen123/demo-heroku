@@ -1,9 +1,9 @@
 package com.server.tradedoc.logic.service;
 
 import com.server.tradedoc.logic.dto.DiscountDTO;
-import com.server.tradedoc.logic.dto.reponse.CreatedResponse;
-import com.server.tradedoc.logic.dto.reponse.DiscountClientResponse;
-import com.server.tradedoc.logic.dto.reponse.NotificationDiscount;
+import com.server.tradedoc.logic.dto.reponse.*;
+
+import java.text.ParseException;
 
 /**
  * DiscountService
@@ -11,7 +11,9 @@ import com.server.tradedoc.logic.dto.reponse.NotificationDiscount;
  * @author DatDV
  */
 public interface DiscountService {
-    CreatedResponse create(DiscountDTO discountDTO);
+    CreatedResponse create(DiscountDTO discountDTO) throws ParseException;
+    UpdateResponse updateStatusDiscount(Long id);
+    DeleteResponse delete(Long id);
     DiscountDTO findOne(Long id);
     DiscountClientResponse findDiscountForClient();
     NotificationDiscount notificationDiscount();

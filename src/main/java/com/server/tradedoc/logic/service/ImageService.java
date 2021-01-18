@@ -7,4 +7,5 @@ import java.net.URISyntaxException;
 
 public interface ImageService {
     ImageResponse createImage(MultipartFile image, String role) throws URISyntaxException;
+    void deleteFileFormDir(String fileName , String role);
 }

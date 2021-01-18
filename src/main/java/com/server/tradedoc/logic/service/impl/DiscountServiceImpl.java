@@ -3,9 +3,7 @@ package com.server.tradedoc.logic.service.impl;
 import com.server.tradedoc.constants.AppConstant;
 import com.server.tradedoc.logic.converter.DiscountConverter;
 import com.server.tradedoc.logic.dto.DiscountDTO;
-import com.server.tradedoc.logic.dto.reponse.CreatedResponse;
-import com.server.tradedoc.logic.dto.reponse.DiscountClientResponse;
-import com.server.tradedoc.logic.dto.reponse.NotificationDiscount;
+import com.server.tradedoc.logic.dto.reponse.*;
 import com.server.tradedoc.logic.entity.DiscountEntity;
 import com.server.tradedoc.logic.repository.DiscountRepository;
 import com.server.tradedoc.logic.service.DiscountService;
@@ -16,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,12 +36,12 @@ public class DiscountServiceImpl implements DiscountService {
     /**
      * create
      *
-     * @param discountDTO
+     * @param discountDTO : request body for insert
      * @return CreatedResponse {com.server.tradedoc.logic.dto.reponse}
      */
     @Override
     @Transactional
-    public CreatedResponse create(DiscountDTO discountDTO) {
+    public CreatedResponse create(DiscountDTO discountDTO) throws ParseException {
         if (discountDTO.getCode().equals("")) {
             throw new CustomException("code discount not empty" , CommonUtils.putError("code" , "ERR_0034"));
         }
@@ -49,13 +49,23 @@ public class DiscountServiceImpl implements DiscountService {
             throw new CustomException("description discount not empty" , CommonUtils.putError("description" , "ERR_0034"));
         }
         if (discountDTO.getDiscountPercent() < 0 || discountDTO.getDiscountPercent() > 100) {
-            throw new CustomException("discount percent not be less than zero and greater than one hundred" , CommonUtils.putError("discountSale" , "ERR_0034"));
+            throw new CustomException("discount percent not be less than zero and greater than one hundred" , CommonUtils.putError("discountPercent" , "ERR_0034"));
         }
         if (discountDTO.getExpireDateStart() == null) {
             throw new CustomException("expire start date discount not empty" , CommonUtils.putError("expireDateStart" , "ERR_0034"));
         }
         if (discountDTO.getExpireDateEnd() == null) {
             throw new CustomException("expire end date discount not empty" , CommonUtils.putError("expireDateEnd" , "ERR_0034"));
+        }
+        if (DateTimeUtils.compareBeforeDateTimeNow(discountDTO.getExpireDateStart())) {
+            throw new CustomException("The start date cannot be prior to the current date" , CommonUtils.putError("discountDTO" , "ERR_0030"));
+        }
+        if (discountDTO.getExpireDateStart().after(discountDTO.getExpireDateEnd())) {
+            throw new CustomException("the start date cannot be after the end date" , CommonUtils.putError("discountDTO" , "ERR_0025"));
+        }
+        List<DiscountEntity> discountEntities = discountRepository.findByDateStartAndDateStart(discountDTO.getExpireDateStart() , discountDTO.getExpireDateEnd());
+        if (!discountEntities.isEmpty()) {
+            throw new CustomException("The same time period as the other discount" , CommonUtils.putError("discountDTO" , "ERR_0030"));
         }
         DiscountEntity discountEntityValidation = discountRepository.findByCode(discountDTO.getCode());
         if (discountEntityValidation != null) {
@@ -73,6 +83,44 @@ public class DiscountServiceImpl implements DiscountService {
         discountEntity.setCreatedDate(Instant.now());
         discountEntity.setModifiedDate(Instant.now());
         response.setIdInserted(discountRepository.save(discountEntity).getId());
+        return response;
+    }
+
+    /**
+     * updateStatusDiscount
+     *
+     * @param id : id of discount for update
+     * @return UpdateResponse {com.server.tradedoc.logic.dto.reponse}
+     */
+    @Override
+    public UpdateResponse updateStatusDiscount(Long id) {
+        UpdateResponse response = new UpdateResponse();
+        DiscountEntity discountEntity = discountRepository.findByStatus(AppConstant.ACTIVE.ACTIVE_STATUS);
+        if (discountEntity != null && !discountEntity.getId().equals(id)) {
+            throw new CustomException("There are other discount currently active" , CommonUtils.putError("status" , "ERR_0025"));
+        }
+        DiscountEntity discountEntityUpdate = discountRepository.findById(id).get();
+        if (discountEntityUpdate.getStatus().equals(AppConstant.ACTIVE.ACTIVE_STATUS)) {
+            discountEntityUpdate.setStatus(AppConstant.ACTIVE.INACTIVE_STATUS);
+        } else {
+            discountEntityUpdate.setStatus(AppConstant.ACTIVE.ACTIVE_STATUS);
+        }
+        discountRepository.save(discountEntityUpdate);
+        response.setIdUpdated(id);
+        return response;
+    }
+
+    /**
+     * delete
+     *
+     * @param id : id discount for delete
+     * @return DeleteResponse {com.server.tradedoc.logic.dto.reponse}
+     */
+    @Override
+    public DeleteResponse delete(Long id) {
+        DeleteResponse response = new DeleteResponse();
+        discountRepository.deleteById(id);
+        response.setIdsDeleted(Arrays.asList(id));
         return response;
     }
 
@@ -97,16 +145,11 @@ public class DiscountServiceImpl implements DiscountService {
     public DiscountClientResponse findDiscountForClient() {
         DiscountClientResponse response = new DiscountClientResponse();
         DiscountEntity resultEntity = discountRepository.findByStatus(AppConstant.ACTIVE.ACTIVE_STATUS);
-        response.setDiscount(discountConverter.toDto(resultEntity));
-        if (DateTimeUtils.equalsDateTimeNow(resultEntity.getExpireDateStart())) {
-            return null;
-        }
-        if (!DateTimeUtils.compareAfterDateTimeNow(resultEntity.getExpireDateStart())) {
-            return null;
-        }
         if (resultEntity != null) {
+            response.setDiscount(discountConverter.toDto(resultEntity));
             response.setTimeRemaining(Integer.parseInt(DateTimeUtils.minusDayAndDateTimeNow(resultEntity.getExpireDateEnd()).toString()));
         } else {
+            response.setDiscount(null);
             response.setTimeRemaining(0);
         }
         return response;

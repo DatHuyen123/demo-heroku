@@ -3,6 +3,7 @@ package com.server.tradedoc.logic.dto.paymentrequest;
 public class PayPalDTO {
     private Long productId;
     private String current;
+    private String discountCode;
 
     public String getCurrent() {
         return current;
@@ -18,5 +19,13 @@ public class PayPalDTO {
 
     public void setProductId(Long productId) {
         this.productId = productId;
+    }
+
+    public String getDiscountCode() {
+        return discountCode;
+    }
+
+    public void setDiscountCode(String discountCode) {
+        this.discountCode = discountCode;
     }
 }
